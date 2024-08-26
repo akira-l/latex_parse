@@ -1,0 +1,547 @@
+Transcript file of tralics 2.14.4 for file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex
+Copyright INRIA/MIAOU/APICS/MARELLE 2002-2011, Jos\'e Grimm
+Tralics is licensed under the CeCILL Free Software Licensing Agreement
+Start compilation: 2024/08/26 15:28:28
+OS: Linux, machine akipad
+Starting translation of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex.
+Using UTF8 encoding (idem transcript).
+Left quote is ` right quote is '
+Input path (temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar:)
+++ Input encoding is 0 for the main file
+++ file .tralics_rc does not exist.
+++ file /usr/share/tralics/.tralics_rc does not exist.
+Dummy default configuration file used.
+No type in configuration file
+Seen \documentclass article
+Potential type is article
+++ file article.tcf does not exist.
+++ file /usr/share/tralics/article.tcf does not exist.
+Using some default type
+dtd is std from classes.dtd (standard mode)
+OK with the configuration file, dealing with the TeX file...
+There are 1191 lines
+Starting translation
+\notrivialmath=1
+{\countdef \count@=\count255}
+{\countdef \c@page=\count0}
+{\dimendef \dimen@=\dimen0}
+{\dimendef \dimen@i=\dimen1}
+{\dimendef \dimen@ii=\dimen2}
+{\dimendef \epsfxsize=\dimen11}
+{\dimendef \epsfysize=\dimen12}
+{\chardef \@ne=\char1}
+{\chardef \tw@=\char2}
+{\chardef \thr@@=\char3}
+{\chardef \sixt@@n=\char16}
+{\chardef \@cclv=\char255}
+{\mathchardef \@cclvi=\mathchar256}
+{\mathchardef \@m=\mathchar1000}
+{\mathchardef \@M=\mathchar10000}
+{\mathchardef \@Mi=\mathchar10001}
+{\mathchardef \@Mii=\mathchar10002}
+{\mathchardef \@Miii=\mathchar10003}
+{\mathchardef \@Miv=\mathchar10004}
+{\mathchardef \@MM=\mathchar20000}
+{\chardef \active=\char13}
+{\tokesdef \toks@=\toks0}
+{\skipdef \skip@=\skip0}
+{\dimendef \z@=\dimen13}
+{\dimendef \p@=\dimen14}
+{\dimendef \oddsidemargin=\dimen15}
+{\dimendef \evensidemargin=\dimen16}
+{\dimendef \leftmargin=\dimen17}
+{\dimendef \rightmargin=\dimen18}
+{\dimendef \leftmargini=\dimen19}
+{\dimendef \leftmarginii=\dimen20}
+{\dimendef \leftmarginiii=\dimen21}
+{\dimendef \leftmarginiv=\dimen22}
+{\dimendef \leftmarginv=\dimen23}
+{\dimendef \leftmarginvi=\dimen24}
+{\dimendef \itemindent=\dimen25}
+{\dimendef \labelwidth=\dimen26}
+{\dimendef \fboxsep=\dimen27}
+{\dimendef \fboxrule=\dimen28}
+{\dimendef \arraycolsep=\dimen29}
+{\dimendef \tabcolsep=\dimen30}
+{\dimendef \arrayrulewidth=\dimen31}
+{\dimendef \doublerulesep=\dimen32}
+{\dimendef \@tempdima=\dimen33}
+{\dimendef \@tempdimb=\dimen34}
+{\dimendef \@tempdimc=\dimen35}
+{\dimendef \footnotesep=\dimen36}
+{\dimendef \topmargin=\dimen37}
+{\dimendef \headheight=\dimen38}
+{\dimendef \headsep=\dimen39}
+{\dimendef \footskip=\dimen40}
+{\dimendef \columnsep=\dimen41}
+{\dimendef \columnseprule=\dimen42}
+{\dimendef \marginparwidth=\dimen43}
+{\dimendef \marginparsep=\dimen44}
+{\dimendef \marginparpush=\dimen45}
+{\dimendef \maxdimen=\dimen46}
+{\dimendef \normallineskiplimit=\dimen47}
+{\dimendef \jot=\dimen48}
+{\dimendef \paperheight=\dimen49}
+{\dimendef \paperwidth=\dimen50}
+{\skipdef \topsep=\skip11}
+{\skipdef \partopsep=\skip12}
+{\skipdef \itemsep=\skip13}
+{\skipdef \labelsep=\skip14}
+{\skipdef \parsep=\skip15}
+{\skipdef \fill=\skip16}
+{\skipdef \@tempskipa=\skip17}
+{\skipdef \@tempskipb=\skip18}
+{\skipdef \@flushglue=\skip19}
+{\skipdef \listparindent=\skip20}
+{\skipdef \hideskip=\skip21}
+{\skipdef \z@skip=\skip22}
+{\skipdef \normalbaselineskip=\skip23}
+{\skipdef \normallineskip=\skip24}
+{\skipdef \smallskipamount=\skip25}
+{\skipdef \medskipamount=\skip26}
+{\skipdef \bigskipamount=\skip27}
+{\skipdef \floatsep=\skip28}
+{\skipdef \textfloatsep=\skip29}
+{\skipdef \intextsep=\skip30}
+{\skipdef \dblfloatsep=\skip31}
+{\skipdef \dbltextfloatsep=\skip32}
+{\countdef \m@ne=\count20}
+{\countdef \c@FancyVerbLine=\count21}
+{\countdef \c@enumi=\count22}
+{\countdef \c@enumii=\count23}
+{\countdef \c@enumiii=\count24}
+{\countdef \c@enumiv=\count25}
+{\countdef \c@enumv=\count26}
+{\countdef \c@enumvi=\count27}
+{\countdef \c@enumvii=\count28}
+{\countdef \c@enumviii=\count29}
+{\countdef \c@enumix=\count30}
+{\countdef \c@enumx=\count31}
+{\countdef \c@Enumi=\count32}
+{\countdef \c@Enumii=\count33}
+{\countdef \c@Enumiii=\count34}
+{\countdef \c@Enumiv=\count35}
+{\countdef \c@Enumv=\count36}
+{\countdef \c@Enumvi=\count37}
+{\countdef \c@Enumvii=\count38}
+{\countdef \c@Enumviii=\count39}
+{\countdef \c@Enumix=\count40}
+{\countdef \c@Enumx=\count41}
+{\countdef \c@tocdepth=\count42}
+{\countdef \c@footnote=\count43}
+{\countdef \c@part=\count44}
+{\countdef \c@chapter=\count45}
+{\countdef \c@section=\count46}
+{\countdef \c@subsection=\count47}
+{\countdef \c@subsubsection=\count48}
+{\countdef \c@paragraph=\count49}
+{\countdef \c@subparagraph=\count50}
+{\countdef \c@mpfootnote=\count51}
+{\countdef \c@table=\count52}
+{\countdef \c@figure=\count53}
+{\countdef \c@subfigure=\count54}
+{\countdef \c@equation=\count55}
+{\countdef \c@bottomnumber=\count56}
+{\countdef \c@topnumber=\count57}
+{\countdef \@tempcnta=\count58}
+{\countdef \@tempcntb=\count59}
+{\countdef \c@totalnumber=\count60}
+{\countdef \c@dbltopnumber=\count61}
+{\countdef \interfootnotelinepenalty=\count62}
+{\countdef \interdisplaylinepenalty=\count63}
+{\toksdef \@temptokena=\toks11}
+{\chardef \@tempboxa=\char11}
+{\chardef \voidb@x=\char12}
+++ file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.ult does not exist.
+++ file article.clt does not exist.
+++ file /usr/share/tralics/article.clt exists.
+++ Made @ a letter
+++ Opened file /usr/share/tralics/article.clt; it has 34 lines
+Document class: article 2011/05/09 v1.2 Article document class for Tralics
+++ file std.clt does not exist.
+++ file /usr/share/tralics/std.clt exists.
+++ Made @ a letter
+++ Opened file /usr/share/tralics/std.clt; it has 91 lines
+File :std 2008/10/23 v1.1 Standard LaTeX document class, for Tralics
+++ End of file /usr/share/tralics/std.clt
+++ cur_file_pos restored to 1
+{Options to execute->letterpaper,10pt,oneside,onecolumn,final}
+{Options to execute->}
+++ End of file /usr/share/tralics/article.clt
+++ cur_file_pos restored to 0
+++ file iclr2024_conference.plt does not exist.
+++ file /usr/share/tralics/iclr2024_conference.plt does not exist.
+Package iclr2024_conference unknown
+++ file times.plt does not exist.
+++ file /usr/share/tralics/times.plt does not exist.
+Package times unknown
+++ file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/math_commands.tex does not exist.
+++ file math_commands.tex does not exist.
+Error signaled at line 4 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Cannot open input file math_commands.tex.
+++ file hyperref.plt does not exist.
+++ file /usr/share/tralics/hyperref.plt exists.
+++ Made @ a letter
+++ Opened file /usr/share/tralics/hyperref.plt; it has 4 lines
+Package: hyperref 2011/04/06 v1.0 Hyperref: Addition to Tralics
+++ End of file /usr/share/tralics/hyperref.plt
+++ cur_file_pos restored to 0
+++ file url.plt does not exist.
+++ file /usr/share/tralics/url.plt does not exist.
+Package url unknown
+++ file graphicx.plt does not exist.
+++ file /usr/share/tralics/graphicx.plt exists.
+++ Made @ a letter
+++ Opened file /usr/share/tralics/graphicx.plt; it has 29 lines
+Package: graphicx 2008/11/06 v1.0 Enhanced Graphics in Tralics
+{Options to execute->}
+++ file graphics.plt does not exist.
+++ file /usr/share/tralics/graphics.plt exists.
+++ Made @ a letter
+++ Opened file /usr/share/tralics/graphics.plt; it has 64 lines
+Package: graphics 2008/11/06 v1.0 Graphics in Tralics
+{Options to execute->}
+++ End of file /usr/share/tralics/graphics.plt
+++ cur_file_pos restored to 6
+++ file keyval.plt does not exist.
+++ file /usr/share/tralics/keyval.plt exists.
+++ Made @ a letter
+++ Opened file /usr/share/tralics/keyval.plt; it has 50 lines
+Package: keyval 2008/02/23 v1.2 key=value parser for Tralics (DPC)
+{Options to execute->unknownkeyserror}
+{Options to execute->}
+++ End of file /usr/share/tralics/keyval.plt
+++ cur_file_pos restored to 6
+++ End of file /usr/share/tralics/graphicx.plt
+++ cur_file_pos restored to 0
+++ file tcolorbox.plt does not exist.
+++ file /usr/share/tralics/tcolorbox.plt does not exist.
+Package tcolorbox unknown
+++ file multirow.plt does not exist.
+++ file /usr/share/tralics/multirow.plt does not exist.
+Package multirow unknown
+++ file multicol.plt does not exist.
+++ file /usr/share/tralics/multicol.plt does not exist.
+Package multicol unknown
+++ file array.plt does not exist.
+++ file /usr/share/tralics/array.plt does not exist.
+Package array unknown
+++ file stackengine.plt does not exist.
+++ file /usr/share/tralics/stackengine.plt does not exist.
+Package stackengine unknown
+++ file booktabs.plt does not exist.
+++ file /usr/share/tralics/booktabs.plt does not exist.
+Package booktabs unknown
+++ file wrapfig.plt does not exist.
+++ file /usr/share/tralics/wrapfig.plt does not exist.
+Package wrapfig unknown
+++ file subcaption.plt does not exist.
+++ file /usr/share/tralics/subcaption.plt does not exist.
+Package subcaption unknown
+++ file xspace.plt does not exist.
+++ file /usr/share/tralics/xspace.plt does not exist.
+Package xspace unknown
+Error signaled at line 23 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \newtcolorbox.
+Error signaled at line 25 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command {Character # of catcode 6}; command code = 6.
+Error signaled at line 40 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \lstset.
+Error signaled at line 76 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \iclrfinalcopy.
+++ End of virtual file.
+++ cur_file_pos restored to 0
+Error signaled at line 79 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Bad use of \\.
+Error signaled at line 79 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Bad use of \\.
+Error signaled at line 79 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Bad use of \\.
+Error signaled at line 79 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Bad use of \\.
+Error signaled at line 82 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \footnotetext.
+Error signaled at line 83 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \footnotetext.
+Error signaled at line 85 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined environment abstract.
+Translating div0: Introduction.
+Translating div0: The CogVideoX Architecture.
+Translating div1: 3D Causal VAE.
+Translating div1: Expert Transformer.
+Translating div3: Patchify..
+Realloc math table to 20
+Realloc math table to 40
+Realloc xml math table to 20
+Translating div3: 3D-RoPE..
+Error signaled at line 251 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing number, treated as zero scanned by \textwidth.
+Error signaled at line 251 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing unit (replaced by pt) {Character } of catcode 2}.
+Error signaled at line 256 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing number, treated as zero scanned by \textwidth.
+Error signaled at line 256 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing unit (replaced by pt) {Character } of catcode 2}.
+Error signaled at line 261 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing number, treated as zero scanned by \textwidth.
+Error signaled at line 261 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing unit (replaced by pt) {Character } of catcode 2}.
+Error signaled at line 266 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing number, treated as zero scanned by \textwidth.
+Error signaled at line 266 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Missing unit (replaced by pt) {Character } of catcode 2}.
+Warning: junk in figure
+detected on line 274 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex.
+Translating div3: Expert Transformer Block..
+Translating div3: 3D Full Attention..
+Translating div1: Data.
+Translating div3: Video Filtering..
+Translating div3: Video Caption..
+Translating div0: Training CogVideoX.
+Translating div1: Frame Pack.
+Translating div1: Resolution Progressive Training.
+Translating div3: Extrapolation of Position Code..
+Translating div3: High-Quality Fine-Tuning..
+Translating div1: Explicit Uniform Sampling.
+Realloc xml math table to 40
+Realloc xml math table to 80
+Translating div1: Position Embedding.
+Translating div1: Expert Adaptive Layernorm.
+Translating div0: Empirical Evaluation.
+Translating div1: Automated Metric Evaluation.
+Translating div3: Baselines..
+Translating div3: Evaluation Metrics..
+Translating div3: Results..
+Error signaled at line 589 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \toprule.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 590 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 591 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \midrule.
+Error signaled at line 603 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \bottomrule.
+Warning: junk in table
+detected on line 605 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex.
+Translating div1: Human Evaluation.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \toprule.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \Centerstack.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `cell', expected `brace'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Wrong goup delimiter
+got `brace', expected `cell'.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \midrule.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \midrule.
+Error signaled at line 635 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex:
+Undefined command \bottomrule.
+Warning: junk in table
+detected on line 636 of file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex.
+Translating div2: Acknowledgments.
+Bib stats: seen 45(45) entries.
+Error signaled in postprocessor
+undefined label `ap:video_caption_gen' (first use at line 376 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Error signaled in postprocessor
+undefined label `ap:video_caption_example' (first use at line 384 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Error signaled in postprocessor
+undefined label `ap:v2v' (first use at line 385 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Error signaled in postprocessor
+undefined label `fig:d' (first use at line 458 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Error signaled in postprocessor
+undefined label `fig:c' (first use at line 459 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Error signaled in postprocessor
+undefined label `fig:b' (first use at line 462 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Error signaled in postprocessor
+undefined label `sec:human_evalution' (first use at line 615 in file temp_dir_arXiv-2408.06072v1.tar.gz/norm/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.tex)
+Math stats: formulas 52, kernels 15, trivial 3, \mbox 5, large 0, small 2.
+Buffer realloc 25, string 4228, size 153392, merge 123
+Macros created 250, deleted 41; hash size 2438; foonotes 1.
+Save stack +611 -611.
+Attribute list search 3332(1502) found 2052 in 2193 elements (1119 at boot).
+Number of ref 26, of used labels 19, of defined labels 20, of ext. ref. 11.
+Input conversion: 1 line converted.
+++ file images/logo.ps does not exist.
+++ file images/logo.eps does not exist.
+++ file images/logo.epsi does not exist.
+++ file images/logo.epsf does not exist.
+++ file images/logo.pdf does not exist.
+++ file images/logo.png does not exist.
+++ file images/logo.gif does not exist.
+++ file images/bench_eval9.ps does not exist.
+++ file images/bench_eval9.eps does not exist.
+++ file images/bench_eval9.epsi does not exist.
+++ file images/bench_eval9.epsf does not exist.
+++ file images/bench_eval9.pdf does not exist.
+++ file images/bench_eval9.png does not exist.
+++ file images/bench_eval9.gif does not exist.
+++ file images/transformer.ps does not exist.
+++ file images/transformer.eps does not exist.
+++ file images/transformer.epsi does not exist.
+++ file images/transformer.epsf does not exist.
+++ file images/transformer.pdf does not exist.
+++ file images/transformer.png does not exist.
+++ file images/transformer.gif does not exist.
+++ file images/3dvae_combined.ps does not exist.
+++ file images/3dvae_combined.eps does not exist.
+++ file images/3dvae_combined.epsi does not exist.
+++ file images/3dvae_combined.epsf does not exist.
+++ file images/3dvae_combined.pdf does not exist.
+++ file images/3dvae_combined.png does not exist.
+++ file images/3dvae_combined.gif does not exist.
+++ file images/ab_sr.ps does not exist.
+++ file images/ab_sr.eps does not exist.
+++ file images/ab_sr.epsi does not exist.
+++ file images/ab_sr.epsf does not exist.
+++ file images/ab_sr.pdf does not exist.
+++ file images/ab_sr.png does not exist.
+++ file images/ab_sr.gif does not exist.
+++ file images/ab_rl.ps does not exist.
+++ file images/ab_rl.eps does not exist.
+++ file images/ab_rl.epsi does not exist.
+++ file images/ab_rl.epsf does not exist.
+++ file images/ab_rl.pdf does not exist.
+++ file images/ab_rl.png does not exist.
+++ file images/ab_rl.gif does not exist.
+++ file images/ab_ex.ps does not exist.
+++ file images/ab_ex.eps does not exist.
+++ file images/ab_ex.epsi does not exist.
+++ file images/ab_ex.epsf does not exist.
+++ file images/ab_ex.pdf does not exist.
+++ file images/ab_ex.png does not exist.
+++ file images/ab_ex.gif does not exist.
+++ file images/ab_us.ps does not exist.
+++ file images/ab_us.eps does not exist.
+++ file images/ab_us.epsi does not exist.
+++ file images/ab_us.epsf does not exist.
+++ file images/ab_us.pdf does not exist.
+++ file images/ab_us.png does not exist.
+++ file images/ab_us.gif does not exist.
+++ file images/attention.ps does not exist.
+++ file images/attention.eps does not exist.
+++ file images/attention.epsi does not exist.
+++ file images/attention.epsf does not exist.
+++ file images/attention.pdf does not exist.
+++ file images/attention.png does not exist.
+++ file images/attention.gif does not exist.
+++ file images/pipeline.ps does not exist.
+++ file images/pipeline.eps does not exist.
+++ file images/pipeline.epsi does not exist.
+++ file images/pipeline.epsf does not exist.
+++ file images/pipeline.pdf does not exist.
+++ file images/pipeline.png does not exist.
+++ file images/pipeline.gif does not exist.
+++ file images/CogVideoX.ps does not exist.
+++ file images/CogVideoX.eps does not exist.
+++ file images/CogVideoX.epsi does not exist.
+++ file images/CogVideoX.epsf does not exist.
+++ file images/CogVideoX.pdf does not exist.
+++ file images/CogVideoX.png does not exist.
+++ file images/CogVideoX.gif does not exist.
+++ file images/ive.ps does not exist.
+++ file images/ive.eps does not exist.
+++ file images/ive.epsi does not exist.
+++ file images/ive.epsf does not exist.
+++ file images/ive.pdf does not exist.
+++ file images/ive.png does not exist.
+++ file images/ive.gif does not exist.
+++ file images/t2v/goodcase1.ps does not exist.
+++ file images/t2v/goodcase1.eps does not exist.
+++ file images/t2v/goodcase1.epsi does not exist.
+++ file images/t2v/goodcase1.epsf does not exist.
+++ file images/t2v/goodcase1.pdf does not exist.
+++ file images/t2v/goodcase1.png does not exist.
+++ file images/t2v/goodcase1.gif does not exist.
+++ file images/t2v/goodcase2.ps does not exist.
+++ file images/t2v/goodcase2.eps does not exist.
+++ file images/t2v/goodcase2.epsi does not exist.
+++ file images/t2v/goodcase2.epsf does not exist.
+++ file images/t2v/goodcase2.pdf does not exist.
+++ file images/t2v/goodcase2.png does not exist.
+++ file images/t2v/goodcase2.gif does not exist.
+There were 14 images.
+Following images not defined: images/logo, images/bench_eval9, images/transformer, images/3dvae_combined, images/ab_sr, images/ab_rl, images/ab_ex, images/ab_us, images/attention, images/pipeline, images/CogVideoX, images/ive, images/t2v/goodcase1, images/t2v/goodcase2.
+Output written on temp_dir_arXiv-2408.06072v1.tar.gz/xml/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.xml (60545 bytes).
+There were 67 errors.
+(For more information, see transcript file temp_dir_arXiv-2408.06072v1.tar.gz/xml/arXiv-2408.06072v1.tar/arXiv-2408.06072v1.tar.log)

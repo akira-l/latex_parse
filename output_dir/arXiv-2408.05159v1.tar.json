@@ -1,0 +1,3361 @@
+{
+    "paper_id": "arXiv-2408.05159v1.tar",
+    "header": {
+        "generated_with": "S2ORC 1.0.0",
+        "date_generated": "2024-08-26T16:09:33.164373Z"
+    },
+    "title": "EasyInv: Toward Fast and Better DDIM Inversion",
+    "authors": [
+        {
+            "first": "",
+            "middle": [],
+            "last": "Ziyue Zhang, 1, , Mingbao Lin, 2, , Shuicheng Yan, 2, , Rongrong Ji, 1",
+            "suffix": "",
+            "affiliation": {},
+            "email": ""
+        }
+    ],
+    "year": "",
+    "venue": "",
+    "identifiers": {
+        "arxiv_id": "arXiv-2408.05159v1.tar"
+    },
+    "abstract": "This paper introduces EasyInv, an easy yet novel approach that significantly advances the field of DDIM Inversion by addressing the inherent inefficiencies and performance limitations of traditional iterative optimization methods. At the core of our EasyInv is a refined strategy for approximating inversion noise, which is pivotal for enhancing the accuracy and reliability of the inversion process. By prioritizing the initial latent state, which encapsulates rich information about the original images, EasyInv steers clear of the iterative refinement of noise items. Instead, we introduce a methodical aggregation of the latent state from the preceding time step with the current state, effectively increasing the influence of the initial latent state and mitigating the impact of noise. We illustrate that EasyInv is capable of delivering results that are either on par with or exceed those of the conventional DDIM Inversion approach, especially under conditions where the model's precision is limited or computational resources are scarce. Concurrently, our EasyInv offers an approximate threefold enhancement regarding inference efficiency over off-the-shelf iterative optimization techniques.",
+    "latex_parse": {
+        "paper_id": "arXiv-2408.05159v1.tar",
+        "_pdf_hash": "",
+        "abstract": [
+            {
+                "text": "This paper introduces EasyInv, an easy yet novel approach that significantly advances the field of DDIM Inversion by addressing the inherent inefficiencies and performance limitations of traditional iterative optimization methods. At the core of our EasyInv is a refined strategy for approximating inversion noise, which is pivotal for enhancing the accuracy and reliability of the inversion process. By prioritizing the initial latent state, which encapsulates rich information about the original images, EasyInv steers clear of the iterative refinement of noise items. Instead, we introduce a methodical aggregation of the latent state from the preceding time step with the current state, effectively increasing the influence of the initial latent state and mitigating the impact of noise. We illustrate that EasyInv is capable of delivering results that are either on par with or exceed those of the conventional DDIM Inversion approach, especially under conditions where the model's precision is limited or computational resources are scarce. Concurrently, our EasyInv offers an approximate threefold enhancement regarding inference efficiency over off-the-shelf iterative optimization techniques.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Abstract",
+                "sec_num": null
+            }
+        ],
+        "body_text": [
+            {
+                "text": "Diffusion models have become a major focus of research in recent years, mostly renowned for their ability to generate high-quality images that closely match given prompts. Among the many diffusion models introduced in the community, Stable Diffusion (SD) BIBREF0 stands out as one of the most widely utilized in scientific research, largely due to its open-source nature. Another contemporary diffusion model gaining popularity is DALL-E 3 BIBREF1 , which offers users access to its API and the ability to interact with it through platforms like ChatGPT BIBREF2 . These models have significantly transformed the visual arts industry and have attracted substantial attention from the research community.",
+                "cite_spans": [
+                    {
+                        "start": 255,
+                        "end": 262,
+                        "text": 16,
+                        "ref_id": "BIBREF0"
+                    },
+                    {
+                        "start": 440,
+                        "end": 447,
+                        "text": 2,
+                        "ref_id": "BIBREF1"
+                    },
+                    {
+                        "start": 554,
+                        "end": 561,
+                        "text": 13,
+                        "ref_id": "BIBREF2"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1"
+            },
+            {
+                "text": "While renowned generative diffusion models have made significant strides, a prevalent limitation is their reliance on textual prompts for input. This approach becomes restrictive when users seek to iteratively refine an image, as the sole reliance on prompts hinders flexibility. Although solutions such as ObjectAdd BIBREF3 and P2P BIBREF4 have been proposed to address image editing challenges, they are still confined to the realm of prompted image manipulation. Given that diffusion models generate images from noise inputs, a potential breakthrough lies in identifying the corresponding noise for any given image. This would enable the diffusion model to initiate the generation process from a known starting point, thereby allowing for precise control over the final output. The recent innovation of DDIM Inversion BIBREF5 aims to overcome this challenge by reversing the denoising process to introduce noise. This technique effectively retrieves the initial noise configuration after a series of reference steps, thereby preserving the integrity of the original image while affording the user the ability to manipulate the output by adjusting the denoising parameters. With DDIM inversion, the generative process becomes more adaptable, facilitating the creation and subsequent editing of images with greater precision and control. For example, the MasaCtrl method BIBREF6 first transforms a real image into a noise representation and then identifies the arrangement of objects during the denoising phase. Portrait Diffusion BIBREF7 simultaneously inverts both the source and target images. Subsequently, it merges their respective INLINEFORM0 , INLINEFORM1 and INLINEFORM2 values for mixups.",
+                "cite_spans": [
+                    {
+                        "start": 317,
+                        "end": 324,
+                        "text": 21,
+                        "ref_id": "BIBREF3"
+                    },
+                    {
+                        "start": 333,
+                        "end": 340,
+                        "text": 7,
+                        "ref_id": "BIBREF4"
+                    },
+                    {
+                        "start": 821,
+                        "end": 828,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    },
+                    {
+                        "start": 1372,
+                        "end": 1379,
+                        "text": 3,
+                        "ref_id": "BIBREF6"
+                    },
+                    {
+                        "start": 1532,
+                        "end": 1539,
+                        "text": 11,
+                        "ref_id": "BIBREF7"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1639,
+                        "end": 1650,
+                        "text": "Q",
+                        "latex": "Q",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>Q</mi></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 1653,
+                        "end": 1664,
+                        "text": "K",
+                        "latex": "K",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>K</mi></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 1669,
+                        "end": 1680,
+                        "text": "V",
+                        "latex": "V",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>V</mi></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    }
+                ],
+                "section": "Introduction",
+                "sec_num": "1"
+            },
+            {
+                "text": "Considering the reliance on inversion techniques to preserve the integrity of the input image, the quality of the inversion process is paramount, as it profoundly influences subsequent tasks. As depicted in Figure FIGREF1 (a), the performance of DDIM Inversion has been found to be less than satisfactory due to the discrepancy between the noise estimated during the inversion process and the noise expected in the sampling process. Consequently, numerous studies have been conducted to enhance its efficacy. In Null-Text inversion BIBREF10 , researchers observed that using a null prompt as input, the diffusion model could generate optimal results during inversion, suggesting that improvements to inversion might be better achieved in the reconstruction branch. Ju et al .'s work BIBREF11 exemplifies this approach by calculating the distance between latents at the current step and the previous step. PTI BIBREF12 opts to update the conditional vector in each step to guide the reconstruction branch for improving consistency. ReNoise BIBREF9 focuses on refining the inversion process itself. This method iteratively adds and then denoises noise at each time step, using the denoised noise as input for the subsequent iteration. However, as shown in Figure FIGREF1 (b), it can result in a black image output when dealing with certain special inputs, which will be discussed in detail in Sec. SECREF4 . Pan et al. BIBREF8 , while maintaining the iterative updating process, also amalgamated noise from previous steps with the current step's noise. However, this method's performance is limited in less effective models as displayed in Figure FIGREF1 (c). For instance, it performs well in SD-XL BIBREF13 but fails to yield proper results in SD-V1-4 BIBREF0 . We attribute this to their method's sole focus on optimizing noise; when the noise is highly inaccurate, such simple optimization strategies encounter difficulties. Additionally, the iterative updating of noise is time-consuming, as Pan et al. 's method requires multiple model inferences per time step.",
+                "cite_spans": [
+                    {
+                        "start": 532,
+                        "end": 540,
+                        "text": 12,
+                        "ref_id": "BIBREF10"
+                    },
+                    {
+                        "start": 783,
+                        "end": 791,
+                        "text": 9,
+                        "ref_id": "BIBREF11"
+                    },
+                    {
+                        "start": 909,
+                        "end": 917,
+                        "text": 5,
+                        "ref_id": "BIBREF12"
+                    },
+                    {
+                        "start": 1039,
+                        "end": 1046,
+                        "text": 6,
+                        "ref_id": "BIBREF9"
+                    },
+                    {
+                        "start": 1417,
+                        "end": 1424,
+                        "text": 14,
+                        "ref_id": "BIBREF8"
+                    },
+                    {
+                        "start": 1698,
+                        "end": 1706,
+                        "text": 15,
+                        "ref_id": "BIBREF13"
+                    },
+                    {
+                        "start": 1752,
+                        "end": 1759,
+                        "text": 16,
+                        "ref_id": "BIBREF0"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 214,
+                        "end": 221,
+                        "text": "1",
+                        "ref_id": "FIGREF1"
+                    },
+                    {
+                        "start": 1261,
+                        "end": 1268,
+                        "text": "1",
+                        "ref_id": "FIGREF1"
+                    },
+                    {
+                        "start": 1645,
+                        "end": 1652,
+                        "text": "1",
+                        "ref_id": "FIGREF1"
+                    },
+                    {
+                        "start": 1396,
+                        "end": 1403,
+                        "text": "4",
+                        "ref_id": "SECREF4"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1"
+            },
+            {
+                "text": "In this paper, we conduct an in-depth analysis and recognize that the foundation of any inversion process is the initial latent state derived from a real image. Errors introduced at each step of the inversion process can accumulate, leading to a suboptimal reconstruction. Current methodologies, which focus on optimizing the transition between successive steps, may not be adequate to address this issue holistically. To tackle this, we propose a novel approach that considers the inversion process as a whole, underscoring the significance of the initial latent state throughout the process. Our approach, named EasyInv, incorporates a straightforward mechanism to periodically reinforce the influence of the initial latent state during the inversion. This is realized by blending the current latent state with the previous one at strategically selected intervals, thereby increasing the weight of the initial latent state and diminishing the noise's impact. As a result, EasyInv ensures a reconstructed version that remains closer to the original image, as illustrated in Figure FIGREF1 (d). Furthermore, by building upon the traditional DDIM Inversion framework BIBREF5 , EasyInv does not depend on iterative optimization between adjacent steps, thus enhancing computational efficiency. In Figure FIGREF2 , we present a visualization of the latent states at the midpoint of the total denoising steps for various inversion methods. It is evident that the outcomes of our EasyInv are more closely aligned with the original image compared to all other methods, demonstrating that EasyInv achieves faster convergence.",
+                "cite_spans": [
+                    {
+                        "start": 1166,
+                        "end": 1173,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 1082,
+                        "end": 1089,
+                        "text": "1",
+                        "ref_id": "FIGREF1"
+                    },
+                    {
+                        "start": 1301,
+                        "end": 1308,
+                        "text": "2",
+                        "ref_id": "FIGREF2"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Introduction",
+                "sec_num": "1"
+            },
+            {
+                "text": " Diffusion Model . In recent years, there has been significant progress in the field of generative models, with diffusion models emerging as a particularly popular approach. The seminal denoising diffusion probabilistic models (DDPM) BIBREF14 introduced a practical framework for image generation based on the diffusion process. This method stands out from its predecessors, such as generative adversarial networks (GANs), due to its iterative nature. During the data preparation phase, Gaussian noise is incrementally added to a real image until it transitions into a state that is indistinguishable from raw Gaussian noise. Subsequently, a model can be trained to predict the noise added at each step, enabling users to input any Gaussian noise and obtain a high-quality image as a result. Ho et al . BIBREF14 provided a robust theoretical foundation for their model, which has facilitated further advancements. Generative process in DDPM is both time-consuming and inherently stochastic due to the random noise introduced at each step. To address these limitations, the denoising diffusion implicit models (DDIM) were developed BIBREF15 . By reformulating DDPM, DDIM has successfully reduced the amount of random noise added at each step. This reformulation results in a more deterministic denoising process. Furthermore, the absence of random noise allows for the aggregation of several denoising steps, thereby significantly reducing the overall computation time required to generate an image.",
+                "cite_spans": [
+                    {
+                        "start": 234,
+                        "end": 242,
+                        "text": 8,
+                        "ref_id": "BIBREF14"
+                    },
+                    {
+                        "start": 803,
+                        "end": 811,
+                        "text": 8,
+                        "ref_id": "BIBREF14"
+                    },
+                    {
+                        "start": 1131,
+                        "end": 1139,
+                        "text": 18,
+                        "ref_id": "BIBREF15"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Related Works",
+                "sec_num": "2"
+            },
+            {
+                "text": " Image Inversion . Converting a real image into noise is a pivotal first step in the realm of real image editing using diffusion models. The precision of this process has a profound impact in the final edit, with the critical element being the accurate identification of the noise added at each step. Couairon et al . BIBREF5 ingeniously swapped the roles of independent and implicit variables within the denoising function of the DDIM model, enabling it to predict the noise that should be introduced to the current latents. However, it is essential to recognize that the denoising step in a diffusion model is inherently an approximation, and when this approximation is utilized inversely, discrepancies between the model's output and the actual noise value are likely to be exacerbated. To address this issue, ReNoise BIBREF9 iterates through each noising step multiple times. For each inversion step, they employ an iterative approach to add and subsequently reduce noise, with the noise reduced in the final iteration being carried forward to the subsequent iteration. Pan et al. BIBREF8 offered a theoretical underpinning to the ReNoise method. Iterative optimization from ReNoise is classified under the umbrella of fixed-point iteration methods. Building upon Anderson's seminal work BIBREF16 , Pan et al . have advanced the field by proposing their novel method for optimizing noise during the inversion process.",
+                "cite_spans": [
+                    {
+                        "start": 318,
+                        "end": 325,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    },
+                    {
+                        "start": 821,
+                        "end": 828,
+                        "text": 6,
+                        "ref_id": "BIBREF9"
+                    },
+                    {
+                        "start": 1085,
+                        "end": 1092,
+                        "text": 14,
+                        "ref_id": "BIBREF8"
+                    },
+                    {
+                        "start": 1292,
+                        "end": 1300,
+                        "text": 0,
+                        "ref_id": "BIBREF16"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Related Works",
+                "sec_num": "2"
+            },
+            {
+                "text": "Let INLINEFORM0 denote a noise tensor with INLINEFORM1 . The DDIM BIBREF5 leverages a pre-trained neural network INLINEFORM2 to perform INLINEFORM3 denoising diffusion steps. Each step aims to estimate the underlying noise and subsequently restore a less noisy version of the tensor, INLINEFORM4 , from its noisy counterpart INLINEFORM5 as: ",
+                "cite_spans": [
+                    {
+                        "start": 66,
+                        "end": 73,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 4,
+                        "end": 15,
+                        "text": "\ud835\udc33 T ",
+                        "latex": "\\mathbf {z}_T",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mi>T</mi></msub></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 43,
+                        "end": 54,
+                        "text": "\ud835\udc33 T \u223c\u2110(0,\ud835\udc08)",
+                        "latex": "\\mathbf {z}_T \\sim \\mathcal {I}(0, \\mathbf {I})",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mi>T</mi></msub><mo>&#x0223C;</mo><mrow><mo>I</mo></mrow><mo stretchy=\"false\">&#x00028;</mo><mn>0</mn><mi>,</mi><mrow><mo>I</mo></mrow><mo stretchy=\"false\">&#x00029;</mo></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 113,
+                        "end": 124,
+                        "text": "\u03b5 \u03b8 ",
+                        "latex": "\\varepsilon _{\\theta }",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 136,
+                        "end": 147,
+                        "text": "T",
+                        "latex": "T",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>T</mi></mrow></math>",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 284,
+                        "end": 295,
+                        "text": "\ud835\udc33 t-1 ",
+                        "latex": "\\mathbf {z}_{t-1}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM4"
+                    },
+                    {
+                        "start": 325,
+                        "end": 336,
+                        "text": "\ud835\udc33 t ",
+                        "latex": "\\mathbf {z}_t",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub></mrow></math>",
+                        "ref_id": "INLINEFORM5"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t-1 =\u03b1 t-1  \u03b1 t \ud835\udc33 t +1 \u03b1 t-1 -1 - 1 \u03b1 t -1\u00b7\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y),",
+                        "latex": "\n\n\\mathbf {z}_{t-1} = \\sqrt{\\frac{\\alpha _{t-1}}{\\alpha _t}}\\mathbf {z}_t + \\Bigg (\\sqrt{\\frac{1}{\\alpha _{t-1}} - 1} - \\sqrt{\\frac{1}{\\alpha _t} - 1} \\Bigg )\\cdot \\varepsilon _{\\theta }\\big (\\mathbf {z}_t,t,\\tau _{\\theta }(y)\\big ),\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow><mrow><msub><mi>&#x003B1;</mi><mi>t</mi></msub></mrow></mfrac></mrow></msqrt><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>&#x0002B;</mo><mo>\\Bigg</mo><mo stretchy=\"false\">&#x00028;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></mfrac><mo>&#x02212;</mo><mn>1</mn></mrow></msqrt><mo>&#x02212;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>&#x003B1;</mi><mi>t</mi></msub></mrow></mfrac><mo>&#x02212;</mo><mn>1</mn></mrow></msqrt><mo>\\Bigg</mo><mo stretchy=\"false\">&#x00029;</mo><mo>&#x022C5;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>,</mo></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " where INLINEFORM0 , and INLINEFORM1 constitutes a prescribed variances set that guides the diffusion process. Furthermore, INLINEFORM2 serves as an intermediate representation that encapsulates the textual condition INLINEFORM3 . For the convenience of following sections, we denote:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 7,
+                        "end": 18,
+                        "text": "t=T\u21921",
+                        "latex": " t = T \\rightarrow 1",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>t</mi><mo>&#x0003D;</mo><mi>T</mi><mo>&#x02192;</mo><mn>1</mn></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 25,
+                        "end": 36,
+                        "text": "{\u03b1 t } t=1 T ",
+                        "latex": " \\lbrace \\alpha _t\\rbrace _{t=1}^T ",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>&#x0007B;</mi><msub><mi>&#x003B1;</mi><mi>t</mi></msub><msubsup><mi>&#x0007D;</mi><mrow><mi>t</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mi>T</mi></msubsup></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 124,
+                        "end": 135,
+                        "text": "\u03c4 \u03b8 ",
+                        "latex": " \\tau _{\\theta } ",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 217,
+                        "end": 228,
+                        "text": "y",
+                        "latex": " y ",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>y</mi></mrow></math>",
+                        "ref_id": "INLINEFORM3"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "d(\ud835\udc33 t )=\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y).",
+                        "latex": "\nd(\\mathbf {z}_t) = \\varepsilon _{\\theta }\\big (\\mathbf {z}_t,t,\\tau _{\\theta }(y)\\big ).\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>.</mo></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": "Re-evaluating Eq. ( EQREF5 ), we derive DDIM Inversion process BIBREF5 as presented in Eq.( EQREF7 ). In this reformulation, we relocate an approximate INLINEFORM0 to the left-hand side, resulting in the following expression: ",
+                "cite_spans": [
+                    {
+                        "start": 63,
+                        "end": 70,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 20,
+                        "end": 26,
+                        "text": "1",
+                        "ref_id": "EQREF5"
+                    },
+                    {
+                        "start": 92,
+                        "end": 98,
+                        "text": "3",
+                        "ref_id": "EQREF7"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 152,
+                        "end": 163,
+                        "text": "\ud835\udc33 t * ",
+                        "latex": "\\mathbf {z}^*_t",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM0"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t * =g\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y)=\u03b1 t  \u03b1 t-1 \ud835\udc33 t-1 * -\u03b1 t  \u03b1 t-1 1 \u03b1 t-1 -1 - 1 \u03b1 t -1\u00b7\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y),",
+                        "latex": "\n\n\\begin{split}\n\\mathbf {z}^*_t &= g\\left(\\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1},t-1,\\tau _{\\theta }(y)\\big )\\right) \\\\&= \\sqrt{\\frac{\\alpha _{t}}{\\alpha _{t-1}}}\\mathbf {z}^*_{t-1} -\\\\& \\sqrt{\\frac{\\alpha _{t}}{\\alpha _{t-1}}}\\Bigg (\\sqrt{\\frac{1}{\\alpha _{t-1}} - 1} - \\sqrt{\\frac{1}{\\alpha _t} - 1} \\Bigg ) \\cdot \\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1},t-1,\\tau _{\\theta }(y)\\big ),\n\\end{split}\n",
+                        "mathml": "",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " Review . Given an image INLINEFORM0 , after encoding it into the latent INLINEFORM1 , we initiate INLINEFORM2 inversion steps using Eq. ( EQREF7 ) to obtain the noise INLINEFORM3 . Starting with INLINEFORM4 , we proceed with a denoising process in Eq. ( EQREF5 ) to infer an approximate reconstruction INLINEFORM5 that resembles the original latent INLINEFORM6 . The primary source of error in this reconstruction arises from the difference between the noise predicted during the inversion process INLINEFORM7 and the noise expected in the sampling process, INLINEFORM8 , denoted as INLINEFORM9 , at each iterative step. This discrepancy originates from an imprecise approximation of the time step from INLINEFORM10 to INLINEFORM11 . Therefore, reducing the discrepancy between the predicted noises at each step is crucial for achieving an accurate reconstruction, which is essential for the success of subsequent image editing tasks. For simplicity in the following expressions, we define:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 139,
+                        "end": 145,
+                        "text": "3",
+                        "ref_id": "EQREF7"
+                    },
+                    {
+                        "start": 255,
+                        "end": 261,
+                        "text": "1",
+                        "ref_id": "EQREF5"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 25,
+                        "end": 36,
+                        "text": "\ud835\udc08 * ",
+                        "latex": "\\mathbf {I}^*",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>I</mi></mrow><mo>&#x0002A;</mo></msup></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 73,
+                        "end": 84,
+                        "text": "\ud835\udc33 0 * ",
+                        "latex": "\\mathbf {z}^*_0",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 99,
+                        "end": 110,
+                        "text": "T",
+                        "latex": "T",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>T</mi></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 168,
+                        "end": 179,
+                        "text": "\ud835\udc33 T * ",
+                        "latex": "\\mathbf {z}^*_T",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 196,
+                        "end": 207,
+                        "text": "\ud835\udc33 T =\ud835\udc33 T * ",
+                        "latex": "\\mathbf {z}_T = \\mathbf {z}^*_T",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM4"
+                    },
+                    {
+                        "start": 303,
+                        "end": 314,
+                        "text": "\ud835\udc33 0 ",
+                        "latex": "\\mathbf {z}_0",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mn>0</mn></msub></mrow></math>",
+                        "ref_id": "INLINEFORM5"
+                    },
+                    {
+                        "start": 350,
+                        "end": 361,
+                        "text": "\ud835\udc33 0 * ",
+                        "latex": "\\mathbf {z}^*_0",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM6"
+                    },
+                    {
+                        "start": 499,
+                        "end": 510,
+                        "text": "\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y)",
+                        "latex": "\\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1}, t-1, \\tau _{\\theta }(y)\\big )",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mi>,</mi></msub><mo>t</mo><mo>&#x02212;</mo><mn>1</mn><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo></mrow></math>",
+                        "ref_id": "INLINEFORM7"
+                    },
+                    {
+                        "start": 559,
+                        "end": 570,
+                        "text": "\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y)",
+                        "latex": "\\varepsilon _{\\theta }\\big (\\mathbf {z}_t, t, \\tau _{\\theta }(y)\\big )",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo></mrow></math>",
+                        "ref_id": "INLINEFORM8"
+                    },
+                    {
+                        "start": 584,
+                        "end": 595,
+                        "text": "\u03b5 t ",
+                        "latex": "\\varepsilon _t",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mi>&#x003B5;</mi><mi>t</mi></msub></mrow></math>",
+                        "ref_id": "INLINEFORM9"
+                    },
+                    {
+                        "start": 704,
+                        "end": 716,
+                        "text": "t",
+                        "latex": "t",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>t</mi></mrow></math>",
+                        "ref_id": "INLINEFORM10"
+                    },
+                    {
+                        "start": 720,
+                        "end": 732,
+                        "text": "t-1",
+                        "latex": "t-1",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></math>",
+                        "ref_id": "INLINEFORM11"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\u03b5 t * =\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y),\u03b5 t =\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y).",
+                        "latex": "\n\\varepsilon _{t}^* = \\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1},t-1,\\tau _{\\theta }(y)\\big ), \\qquad \\varepsilon _t = \\varepsilon _{\\theta }\\big (\\mathbf {z}_t,t,\\tau _{\\theta }(y)\\big ).\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mrow><mi>t</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mi>,</mi></msub><mo>t</mo><mo>&#x02212;</mo><mn>1</mn><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>,</mo><mspace width=\"0.167em\" /><msub><mi>&#x003B5;</mi><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>.</mo></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Preliminaries::DDIM Inversion",
+                "sec_num": "3.1.1"
+            },
+            {
+                "text": "The vanilla DDIM Inversion method, as discussed, involves an approximation that is not entirely precise for INLINEFORM0 . To address this, researchers have sought to refine a more accurate approximation of INLINEFORM1 , thereby ensuring that the desired conditions are optimally met. This refinement process aims to enhance the precision of the method, leading to more reliable results in the context of the application:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 108,
+                        "end": 119,
+                        "text": "\u03b5 t * ",
+                        "latex": "\\varepsilon _t^*",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 206,
+                        "end": 217,
+                        "text": "\u03b5 t * ",
+                        "latex": "\\varepsilon _t^*",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\u03b5 t * =\u03b5 t .",
+                        "latex": "\n\\varepsilon _t^* = \\varepsilon _t.\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mi>t</mi></msub><mi>.</mi></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "For clarity, let's first restate Eq. ( EQREF7 ) as follows:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 39,
+                        "end": 45,
+                        "text": "3",
+                        "ref_id": "EQREF7"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t * =g(\u03b5 t * ),",
+                        "latex": "\n\\mathbf {z}^*_t = g(\\varepsilon _t^*),\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mi>t</mi><mo>&#x0003D;</mo></msub><mo>g</mo><mo stretchy=\"false\">&#x00028;</mo><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo stretchy=\"false\">&#x00029;</mo><mo>,</mo></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "which represents the introduction of adding noise to the latent state INLINEFORM0 . Under the assumption of Eq. ( EQREF10 ), it should be the case that:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 114,
+                        "end": 121,
+                        "text": "5",
+                        "ref_id": "EQREF10"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 70,
+                        "end": 81,
+                        "text": "\ud835\udc33 t-1 * ",
+                        "latex": "\\mathbf {z}^*_{t-1}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t =\ud835\udc33 t * .",
+                        "latex": "\n\\mathbf {z}_t = \\mathbf {z}_t^*.\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>&#x0003D;</mo><msubsup><mrow><mi>z</mi></mrow><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo>.</mo></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "Subsequently, by employing the noise estimation function from Eq. ( EQREF6 ), we obtain:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 68,
+                        "end": 74,
+                        "text": "2",
+                        "ref_id": "EQREF6"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "d(\ud835\udc33 t )=dg ( \u03b5 t *  ).",
+                        "latex": "\nd\\big (\\mathbf {z}_t) = d\\big (g(\\varepsilon _t^*)\\big ).\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0003D;</mo><mo>d</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><mo>g</mo><mo stretchy=\"false\">&#x00028;</mo><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>.</mo></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "Given that INLINEFORM0 and considering Eq. ( EQREF10 ), we can deduce that:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 45,
+                        "end": 52,
+                        "text": "5",
+                        "ref_id": "EQREF10"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 11,
+                        "end": 22,
+                        "text": "d(\ud835\udc33 t )=\u03b5 t ",
+                        "latex": "d(\\mathbf {z}_t) = \\varepsilon _{t}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>t</mi></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\u03b5 t * =dg ( \u03b5 t *  ).",
+                        "latex": "\n\\varepsilon _{t}^* = d\\big (g(\\varepsilon _t^*)\\big ).\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mrow><mi>t</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><mi>d</mi><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><mi>g</mi><mo stretchy=\"false\">&#x00028;</mo><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo stretchy=\"false\">&#x00029;</mo><mi>\\big</mi><mo stretchy=\"false\">&#x00029;</mo><mi>.</mi></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "This formulation presents a fixed-point problem, which pertains to a value that remains unchanged under a specific transformation BIBREF17 . In the context of functions, a fixed point is an element that is invariant under the application of the function. In this paper, we seek a INLINEFORM0 that, when transformed by INLINEFORM1 and followed by INLINEFORM2 , can map back to itself, signifying an optimal solution as per Eq. ( EQREF10 ).",
+                "cite_spans": [
+                    {
+                        "start": 130,
+                        "end": 138,
+                        "text": 1,
+                        "ref_id": "BIBREF17"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 428,
+                        "end": 435,
+                        "text": "5",
+                        "ref_id": "EQREF10"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 280,
+                        "end": 291,
+                        "text": "\u03b5 t * ",
+                        "latex": "\\varepsilon ^*_t",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 318,
+                        "end": 329,
+                        "text": "g",
+                        "latex": "g",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>g</mi></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 346,
+                        "end": 357,
+                        "text": "d",
+                        "latex": "d",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "Fixed-point iteration is a computational technique designed to identify the fixed points of a function. It functions through an iterative process, as delineated below:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "(\u03b5 t * ) n =dg (\u03b5 t * ) n-1 ,",
+                        "latex": "\n(\\varepsilon ^*_{t})^n = d\\big (g(\\varepsilon ^*_{t})^{n-1}\\big ),\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mi>n</mi></msup><mo>&#x0003D;</mo><mi>d</mi><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><mi>g</mi><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mi>\\big</mi><mo stretchy=\"false\">&#x00029;</mo><mi>,</mi></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "where INLINEFORM0 denotes the iteration count. This iterative process can be enhanced through acceleration techniques such as Anderson acceleration BIBREF16 . However, calculating a complex INLINEFORM1 can be quite onerous. An empirical acceleration method proposed BIBREF8 introduces a refinement for INLINEFORM2 by setting: INLINEFORM3 and INLINEFORM4 . They finally reach:",
+                "cite_spans": [
+                    {
+                        "start": 148,
+                        "end": 156,
+                        "text": 0,
+                        "ref_id": "BIBREF16"
+                    },
+                    {
+                        "start": 266,
+                        "end": 273,
+                        "text": 14,
+                        "ref_id": "BIBREF8"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 6,
+                        "end": 17,
+                        "text": "n",
+                        "latex": "n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>n</mi></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 190,
+                        "end": 201,
+                        "text": "\u03b5 t * ",
+                        "latex": "\\varepsilon ^*_{t}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 302,
+                        "end": 313,
+                        "text": "\u03b5 t * ",
+                        "latex": "\\varepsilon _t^*",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 326,
+                        "end": 337,
+                        "text": "\u03b5 t *  ) n =\u03b5 \u03b8 ( (\ud835\udc33 t * ) n  , t - 1 , \u03c4 \u03b8  (y)",
+                        "latex": "\\big (\\varepsilon ^*_{t})^n = \\varepsilon _{\\theta }(({\\mathbf {z}^{*}_{t}})^{n},t-1,\\tau _{\\theta }(y)\\big )",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>\\big</mi><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mi>n</mi></msup><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><mrow><msubsup><mrow><mi>z</mi></mrow><mrow><mi>t</mi></mrow><mrow><mo>&#x0002A;</mo></mrow></msubsup></mrow><mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mi>n</mi></mrow></msup><mi>,</mi><mi>t</mi><mo>&#x02212;</mo><mn>1</mn><mi>,</mi><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mi>y</mi><mo stretchy=\"false\">&#x00029;</mo><mi>\\big</mi><mo stretchy=\"false\">&#x00029;</mo></mrow></math>",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 342,
+                        "end": 353,
+                        "text": "(\u03b5 t * ) n-1 =\u03b5 \u03b8 (\ud835\udc33 t * ) n-1  , t - 1 , \u03c4 \u03b8  (y)",
+                        "latex": "(\\varepsilon ^*_{t})^{n-1} = \\varepsilon _{\\theta }\\big (({\\mathbf {z}^{*}_{t}})^{n-1},t-1,\\tau _{\\theta }(y)\\big )",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><mrow><msubsup><mrow><mi>z</mi></mrow><mrow><mi>t</mi></mrow><mrow><mo>&#x0002A;</mo></mrow></msubsup></mrow><mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mi>,</mi><mi>t</mi><mo>&#x02212;</mo><mn>1</mn><mi>,</mi><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mi>y</mi><mo stretchy=\"false\">&#x00029;</mo><mi>\\big</mi><mo stretchy=\"false\">&#x00029;</mo></mrow></math>",
+                        "ref_id": "INLINEFORM4"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "(\ud835\udc33 t * ) n+1 =g(0.5\u00b7(\u03b5 t * ) n +0.5\u00b7(\u03b5 t * ) n-1 ),",
+                        "latex": "\n({\\mathbf {z}^{*}_{t}})^{n+1} = g(0.5 \\cdot (\\varepsilon ^*_{t})^n+0.5 \\cdot (\\varepsilon ^*_{t})^{n-1}),\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><mrow><msubsup><mrow><mi>z</mi></mrow><mrow><mi>t</mi></mrow><mrow><mo>&#x0002A;</mo></mrow></msubsup></mrow><mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mi>n</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msup><mo>&#x0003D;</mo><mi>g</mi><mo stretchy=\"false\">&#x00028;</mo><mn>0.5</mn><mo>&#x022C5;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mi>n</mi></msup><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x022C5;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo stretchy=\"false\">&#x00029;</mo><mi>,</mi></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "where the term INLINEFORM0 represents the refinement technique for INLINEFORM1 as suggested by Pan et al. . If we were to apply the function INLINEFORM2 to both sides of Eq. ( EQREF16 ), it would align perfectly with the form of Eq. ( EQREF15 ). Their experiments have demonstrated that this approach is more effective than both Anderson's method BIBREF16 and other techniques in inversion tasks.",
+                "cite_spans": [
+                    {
+                        "start": 347,
+                        "end": 355,
+                        "text": 0,
+                        "ref_id": "BIBREF16"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 176,
+                        "end": 183,
+                        "text": "11",
+                        "ref_id": "EQREF16"
+                    },
+                    {
+                        "start": 235,
+                        "end": 242,
+                        "text": "10",
+                        "ref_id": "EQREF15"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 15,
+                        "end": 26,
+                        "text": "0.5\u00b7(\u03b5 t * ) n +0.5\u00b7(\u03b5 t * ) n-1 ",
+                        "latex": "0.5 \\cdot (\\varepsilon ^*_{t})^n+0.5 \\cdot (\\varepsilon ^*_{t})^{n-1}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mn>0.5</mn><mo>&#x022C5;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mi>n</mi></msup><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x022C5;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 67,
+                        "end": 78,
+                        "text": "\u03b5 t * ",
+                        "latex": "\\varepsilon ^*_{t}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 141,
+                        "end": 152,
+                        "text": "d",
+                        "latex": "d",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "Despite the progress made, this paper acknowledges inherent limitations in the practical implementation of the inversion technique: (1) Inversion Efficiency: While the method outlined in Eq. ( EQREF16 ) has shown improvements over traditional fixed-point iteration, it still relies on iterative optimization. The need for multiple forward passes through the diffusion model is computationally demanding and can result in inefficiencies in downstream applications. (2) Inversion Performance: The theoretical improvements presented assume that INLINEFORM0 . However, iterative optimization does not guarantee the exact fulfillment of Equation ( EQREF12 ) for every time step INLINEFORM1 . Therefore, while the method may theoretically offer superior performance, cumulative errors can sometimes lead to practical outcomes that are less satisfactory than those achieved with the standard DDIM Inversion method, as shown in Figure FIGREF1 .",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 927,
+                        "end": 934,
+                        "text": "1",
+                        "ref_id": "FIGREF1"
+                    },
+                    {
+                        "start": 193,
+                        "end": 200,
+                        "text": "11",
+                        "ref_id": "EQREF16"
+                    },
+                    {
+                        "start": 643,
+                        "end": 650,
+                        "text": "7",
+                        "ref_id": "EQREF12"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 542,
+                        "end": 553,
+                        "text": "\u03b5 t * =\u03b5 t ",
+                        "latex": "\\varepsilon ^*_t = \\varepsilon _t",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mi>t</mi><mo>&#x0003D;</mo></msub><msub><mi>&#x003B5;</mi><mi>t</mi></msub></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 673,
+                        "end": 684,
+                        "text": "t",
+                        "latex": " t ",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>t</mi></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    }
+                ],
+                "section": "Methodology::Fixed-Point Iteration",
+                "sec_num": "3.2"
+            },
+            {
+                "text": "To facilitate our subsequent analysis, we introduce the notation INLINEFORM0 to represent INLINEFORM1 and INLINEFORM2 to denote INLINEFORM3 . With these notations, we can reframe Eq. ( EQREF7 ) as follow:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 185,
+                        "end": 191,
+                        "text": "3",
+                        "ref_id": "EQREF7"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 65,
+                        "end": 76,
+                        "text": "\u03b1 \u00af t ",
+                        "latex": "\\bar{\\alpha }_{t}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mrow><mi>t</mi></mrow></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 90,
+                        "end": 101,
+                        "text": "\u03b1 t  \u03b1 t-1 ",
+                        "latex": "\\sqrt{\\frac{\\alpha _{t}}{\\alpha _{t-1}}}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msqrt><mrow><mfrac><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi></mrow></msub></mrow><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></mfrac></mrow></msqrt></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 106,
+                        "end": 117,
+                        "text": "\u03b2 \u00af t ",
+                        "latex": "\\bar{\\beta }_{t}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B2;</mi></mrow><mrow><mi>t</mi></mrow></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 128,
+                        "end": 139,
+                        "text": "\u03b1 t  \u03b1 t-1 1 \u03b1 t-1 -1 - 1 \u03b1 t -1",
+                        "latex": "\\sqrt{\\frac{\\alpha _{t}}{\\alpha _{t-1}}}\\Big (\\sqrt{\\frac{1}{\\alpha _{t-1}} - 1} - \\sqrt{\\frac{1}{\\alpha _t} - 1} \\Big )",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msqrt><mrow><mfrac><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi></mrow></msub></mrow><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></mfrac></mrow></msqrt><mi>\\Big</mi><mo stretchy=\"false\">&#x00028;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></mfrac><mo>&#x02212;</mo><mn>1</mn></mrow></msqrt><mo>&#x02212;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>&#x003B1;</mi><mi>t</mi></msub></mrow></mfrac><mo>&#x02212;</mo><mn>1</mn></mrow></msqrt><mi>\\Big</mi><mo stretchy=\"false\">&#x00029;</mo></mrow></math>",
+                        "ref_id": "INLINEFORM3"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t * =\u03b1 \u00af t \ud835\udc33 t-1 * +\u03b2 \u00af t \u03b5 t * ,",
+                        "latex": "\n\\mathbf {z}^*_{t}=\\bar{\\alpha }_{t}\\mathbf {z}^*_{t-1} + \\bar{\\beta }_{t}\\varepsilon ^*_{t},\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo>&#x0003D;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi></mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B2;</mo></mrow><mrow><mi>t</mi></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mi>,</mi></msub></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "Similarly, we can express the form of INLINEFORM0 as:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 38,
+                        "end": 49,
+                        "text": "\ud835\udc33 t-1 * ",
+                        "latex": "\\mathbf {z}^*_{t-1}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t-1 * =\u03b1 \u00af t-1 \ud835\udc33 t-2 * +\u03b2 \u00af t-1 \u03b5 t-1 * ,",
+                        "latex": "\n\\mathbf {z}^*_{t-1}=\\bar{\\alpha }_{t-1}\\mathbf {z}^*_{t-2} + \\bar{\\beta }_{t-1}\\varepsilon ^*_{t-1},\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mo>&#x0003D;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>2</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B2;</mo></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mi>,</mi></msub></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "By combining these two formulas, we derive:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t * =\u03b1 \u00af t \u03b1 \u00af t-1 \ud835\udc33 t-2 * +\u03b1 \u00af t \u03b2 \u00af t-1 \u03b5 t-1 * +\u03b2 \u00af t \u03b5 t * .",
+                        "latex": "\n\\mathbf {z}^*_{t}=\\bar{\\alpha }_{t}\\bar{\\alpha }_{t-1}\\mathbf {z}^*_{t-2} + \\bar{\\alpha }_{t}\\bar{\\beta }_{t-1}\\varepsilon ^*_{t-1} + \\bar{\\beta }_{t}\\varepsilon ^*_{t}.\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo>&#x0003D;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi></mrow><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>2</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi></mrow><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B2;</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B2;</mi></mrow><mrow><mi>t</mi></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mi>.</mi></msub></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "This can be further generalized to:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t * =(\u220f i=1 t \u03b1 \u00af i )\ud835\udc33 0 * +\u2211 i=1 t (\u03b2 \u00af i \u220f j=i+1 t \u03b1 \u00af j )\u03b5 i * .",
+                        "latex": "\n\\mathbf {z}^*_{t} = (\\prod _{i=1}^{t}\\bar{\\alpha }_i)\\mathbf {z}^*_{0} + \\sum _{i=1}^{t}(\\bar{\\beta }_i\\prod _{j = i+1}^{t}\\bar{\\alpha }_j)\\varepsilon ^*_i.\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo>&#x0003D;</mo></msub><mo stretchy=\"false\">&#x00028;</mo><msubsup><mo>&#x0220F;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mi>i</mi><mo stretchy=\"false\">&#x00029;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mn>0</mn></mrow><mo>&#x0002B;</mo></msub><msubsup><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mo stretchy=\"false\">&#x00028;</mo><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B2;</mo></mrow><mi>i</mi><msubsup><mo>&#x0220F;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mi>i</mi><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mi>j</mi><mo stretchy=\"false\">&#x00029;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mi>i</mi><mi>.</mi></msub></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "From Eq. ( EQREF21 ), it is evident that INLINEFORM0 is a weighted sum of INLINEFORM1 and a series of noise terms INLINEFORM2 . The denoising process of Eq. ( EQREF5 ) aims to iteratively reduce the impact of these noise terms. In prior research, the crux of inversion is to introduce the appropriate noise INLINEFORM3 at each step to identify a suitable INLINEFORM4 . This allows the model to obtain INLINEFORM5 as the final output after the denoising process. However, iteratively updating INLINEFORM6 can be time-consuming, and when the model lacks high precision, achieving satisfactory results within a reasonable number of iterations may be challenging.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 11,
+                        "end": 18,
+                        "text": "15",
+                        "ref_id": "EQREF21"
+                    },
+                    {
+                        "start": 159,
+                        "end": 165,
+                        "text": "1",
+                        "ref_id": "EQREF5"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 41,
+                        "end": 52,
+                        "text": "\ud835\udc33 t * ",
+                        "latex": "\\mathbf {z}^*_{t}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 74,
+                        "end": 85,
+                        "text": "\ud835\udc33 0 ",
+                        "latex": "\\mathbf {z}_{0}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mrow><mn>0</mn></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 114,
+                        "end": 125,
+                        "text": "\u03b5 i * ",
+                        "latex": "\\varepsilon ^*_i",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 307,
+                        "end": 318,
+                        "text": "\u03b5 i * ",
+                        "latex": "\\varepsilon ^*_i",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 355,
+                        "end": 366,
+                        "text": "\ud835\udc33 t * ",
+                        "latex": "\\mathbf {z}^*_{t}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM4"
+                    },
+                    {
+                        "start": 401,
+                        "end": 412,
+                        "text": "\ud835\udc33 0 ",
+                        "latex": "\\mathbf {z}_{0}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mrow><mn>0</mn></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM5"
+                    },
+                    {
+                        "start": 492,
+                        "end": 503,
+                        "text": "\u03b5 i * ",
+                        "latex": "\\varepsilon ^*_i",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM6"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "To address this, we propose an alternative perspective. During inversion, rather than searching for better noise, we aggregate the latent state from the last time step INLINEFORM0 with the current latent state INLINEFORM1 at specific time steps INLINEFORM2 , as illustrated in the following formula:",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 168,
+                        "end": 179,
+                        "text": "\ud835\udc33 t \u00af-1 * ",
+                        "latex": "\\mathbf {z}^*_{\\bar{t}-1}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 210,
+                        "end": 221,
+                        "text": "\ud835\udc33 t \u00af * ",
+                        "latex": "\\mathbf {z}^*_{\\bar{t}}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 245,
+                        "end": 256,
+                        "text": "t \u00af",
+                        "latex": "\\bar{t}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t \u00af * =\u03b7\ud835\udc33 t \u00af * +(1-\u03b7)\ud835\udc33 t \u00af-1 * ,",
+                        "latex": "\n\\mathbf {z}^*_{\\bar{t}}=\\eta \\mathbf {z}^*_{\\bar{t}} + (1-\\eta ) \\mathbf {z}^*_{{\\bar{t}-1}},\n",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow><mo>&#x0003D;</mo></msub><mo>&#x003B7;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow><mo>&#x0002B;</mo></msub><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mo>&#x003B7;</mo><mo stretchy=\"false\">&#x00029;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover><mo>&#x02212;</mo><mn>1</mn></mrow></mrow><mi>,</mi></msub></mrow></math>",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "where INLINEFORM0 is a trade-off parameter, typically set to INLINEFORM1 . The selection of INLINEFORM2 will be discussed in Sec. SECREFU28 . This approach effectively increases the weight INLINEFORM3 in INLINEFORM4 , since:",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 130,
+                        "end": 139,
+                        "text": "4.1",
+                        "ref_id": "SECREFU28"
+                    }
+                ],
+                "eq_spans": [
+                    {
+                        "start": 6,
+                        "end": 17,
+                        "text": "\u03b7",
+                        "latex": "\\eta ",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>&#x003B7;</mi></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 61,
+                        "end": 72,
+                        "text": "\u03b7\u22650.7",
+                        "latex": "\\eta \\ge 0.7",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>&#x003B7;</mi><mo>&#x02265;</mo><mn>0.7</mn></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 92,
+                        "end": 103,
+                        "text": "t \u00af",
+                        "latex": "\\bar{t}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 189,
+                        "end": 200,
+                        "text": "\ud835\udc33 0 ",
+                        "latex": "\\mathbf {z}_{0}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mrow><mn>0</mn></mrow></msub></mrow></math>",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 204,
+                        "end": 215,
+                        "text": "\ud835\udc33 t \u00af * ",
+                        "latex": "\\mathbf {z}^*_{\\bar{t}}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM4"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": " DISPLAYFORM0 ",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 1,
+                        "end": 13,
+                        "text": "\ud835\udc33 t \u00af-1 * -\ud835\udc33 t \u00af * =(\u220f i=1 t \u00af-1 \u03b1 \u00af i )(1-\u03b1 \u00af t \u00af )\ud835\udc33 0 +(1-\u03b1 \u00af t \u00af )\u2211 i=1 t \u00af-1 (\u03b2 \u00af i \u220f j=i+1 t \u00af-1 \u03b1 \u00af j )\u03b5 i * +(-\u03b2 \u00af t )\u03b5 t \u00af * ",
+                        "latex": "\n\\begin{split}\n\\mathbf {z}^*_{{\\bar{t}-1}} - \\mathbf {z}^*_{\\bar{t}} = (\\prod _{i=1}^{\\bar{t}-1}\\bar{\\alpha }_i)(1 - \\bar{\\alpha }_{\\bar{t}})\\mathbf {z}_{0} \\\\+ (1 - \\bar{\\alpha }_{\\bar{t}})\\sum _{i=1}^{\\bar{t}-1}(\\bar{\\beta }_i\\prod _{j = i+1}^{\\bar{t}-1}\\bar{\\alpha }_j)\\varepsilon ^*_i + (-\\bar{\\beta }_{t})\\varepsilon ^*_{\\bar{t}}\n\\end{split}\n",
+                        "mathml": "",
+                        "ref_id": "DISPLAYFORM0"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "Given that INLINEFORM0 , for INLINEFORM1 , it follows that INLINEFORM2 . Consequently, in comparison to INLINEFORM3 , INLINEFORM4 carries a higher proportion of INLINEFORM5 and is, therefore, less susceptible to the influence of noise. Our approach, therefore, accentuates the significance of the initial latent state INLINEFORM6 , which encapsulates the most comprehensive information regarding the original image, within INLINEFORM7 .",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 11,
+                        "end": 22,
+                        "text": "0<\u03b1 \u00af i <1",
+                        "latex": "0 < \\bar{\\alpha }_i < 1",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mn>0</mn><mo>&lt;</mo><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mi>i</mi><mo>&lt;</mo><mn>1</mn></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 29,
+                        "end": 40,
+                        "text": "i=0\u2192t \u00af",
+                        "latex": " i = 0 \\rightarrow \\bar{t}",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>0</mn><mo>&#x02192;</mo><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 59,
+                        "end": 70,
+                        "text": "(\u220f i=0 t \u00af-1 \u03b1 \u00af i )(1-\u03b1 \u00af t \u00af )>0",
+                        "latex": "(\\prod _{i=0}^{\\bar{t}-1}\\bar{\\alpha }_i)(1 - \\bar{\\alpha }_{\\bar{t}}) > 0",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mo stretchy=\"false\">&#x00028;</mo><msubsup><mo>&#x0220F;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>0</mn></mrow><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover><mo>&#x02212;</mo><mn>1</mn></mrow></msubsup><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mi>i</mi><mo stretchy=\"false\">&#x00029;</mo><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow><mo stretchy=\"false\">&#x00029;</mo><mo>&gt;</mo><mn>0</mn></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 104,
+                        "end": 115,
+                        "text": "\ud835\udc33 t \u00af * ",
+                        "latex": "\\mathbf {z}^*_{\\bar{t}}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 118,
+                        "end": 129,
+                        "text": "\ud835\udc33 t \u00af-1 * ",
+                        "latex": "\\mathbf {z}^*_{\\bar{t}-1}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM4"
+                    },
+                    {
+                        "start": 161,
+                        "end": 172,
+                        "text": "\ud835\udc33 0 ",
+                        "latex": "\\mathbf {z}_0",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mn>0</mn></msub></mrow></math>",
+                        "ref_id": "INLINEFORM5"
+                    },
+                    {
+                        "start": 318,
+                        "end": 329,
+                        "text": "\ud835\udc33 0 ",
+                        "latex": "\\mathbf {z}_0",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mn>0</mn></msub></mrow></math>",
+                        "ref_id": "INLINEFORM6"
+                    },
+                    {
+                        "start": 423,
+                        "end": 434,
+                        "text": "\ud835\udc33 t \u00af * ",
+                        "latex": "\\mathbf {z}^*_{\\bar{t}}",
+                        "mathml": "",
+                        "ref_id": "INLINEFORM7"
+                    }
+                ],
+                "section": "Methodology::EasyInv",
+                "sec_num": "3.3"
+            },
+            {
+                "text": "We compare our EasyInv over the vanilla DDIM Inversion BIBREF5 , ReNoise BIBREF9 , Pan et al. 's method BIBREF8 (referred to as Fixed-Point Iteration), using SD V1.4 and SD-XL on one NVIDIA GTX 3090 GPU.",
+                "cite_spans": [
+                    {
+                        "start": 55,
+                        "end": 62,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    },
+                    {
+                        "start": 73,
+                        "end": 80,
+                        "text": 6,
+                        "ref_id": "BIBREF9"
+                    },
+                    {
+                        "start": 104,
+                        "end": 111,
+                        "text": 14,
+                        "ref_id": "BIBREF8"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experimentation",
+                "sec_num": "4"
+            },
+            {
+                "text": "For Fixed-Point Iteration BIBREF8 , we re-implemented it using settings from the paper, as the source code is unavailable. We set the data type of all methods to float16 by default to improve efficiency. The inversion and denoising steps INLINEFORM0 , except for Fixed-Point Iteration, which recommends INLINEFORM1 . For our EasyInv, we use INLINEFORM2 and INLINEFORM3 with the SD-XL framework, and INLINEFORM4 and INLINEFORM5 with SD-V1-4, due to the varying capacities of the two models.",
+                "cite_spans": [
+                    {
+                        "start": 26,
+                        "end": 33,
+                        "text": 14,
+                        "ref_id": "BIBREF8"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [
+                    {
+                        "start": 238,
+                        "end": 249,
+                        "text": "T=50",
+                        "latex": "T = 50",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>50</mn></mrow></math>",
+                        "ref_id": "INLINEFORM0"
+                    },
+                    {
+                        "start": 303,
+                        "end": 314,
+                        "text": "T=20",
+                        "latex": "T = 20",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>T</mi><mo>&#x0003D;</mo><mn>20</mn></mrow></math>",
+                        "ref_id": "INLINEFORM1"
+                    },
+                    {
+                        "start": 341,
+                        "end": 352,
+                        "text": "0.85\u00b7T<t \u00af<0.95\u00b7T",
+                        "latex": "0.85 \\cdot T < \\bar{t} < 0.95 \\cdot T",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mn>0.85</mn><mo>&#x022C5;</mo><mi>T</mi><mo>&lt;</mo><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover><mo>&lt;</mo><mn>0.95</mn><mo>&#x022C5;</mo><mi>T</mi></mrow></math>",
+                        "ref_id": "INLINEFORM2"
+                    },
+                    {
+                        "start": 357,
+                        "end": 368,
+                        "text": "\u03b7=0.8",
+                        "latex": "\\eta = 0.8",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.8</mn></mrow></math>",
+                        "ref_id": "INLINEFORM3"
+                    },
+                    {
+                        "start": 399,
+                        "end": 410,
+                        "text": "0.05\u00b7T<t \u00af<0.25\u00b7T",
+                        "latex": "0.05 \\cdot T < \\bar{t} < 0.25 \\cdot T",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mn>0.05</mn><mo>&#x022C5;</mo><mi>T</mi><mo>&lt;</mo><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover><mo>&lt;</mo><mn>0.25</mn><mo>&#x022C5;</mo><mi>T</mi></mrow></math>",
+                        "ref_id": "INLINEFORM4"
+                    },
+                    {
+                        "start": 415,
+                        "end": 426,
+                        "text": "\u03b7=0.5",
+                        "latex": "\\eta = 0.5",
+                        "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>&#x003B7;</mi><mo>&#x0003D;</mo><mn>0.5</mn></mrow></math>",
+                        "ref_id": "INLINEFORM5"
+                    }
+                ],
+                "section": "Experimentation",
+                "sec_num": "4"
+            },
+            {
+                "text": "For quantitative comparison, we use three major metrics: LPIPS index BIBREF18 , SSIM BIBREF19 , and PSNR. The LPIPS index uses a pre-trained VGG16 BIBREF20 to compare image pairs. SSIM and PSNR measure image similarity. We also report inference time. We randomly sample 2,298 images from the COCO 2017 test and validation sets BIBREF21 . With the well-trained SD-XL model, error accumulation is minimal, making all methods perform similarly. Therefore, we display results using the SD-V1-4 model.",
+                "cite_spans": [
+                    {
+                        "start": 69,
+                        "end": 77,
+                        "text": 20,
+                        "ref_id": "BIBREF18"
+                    },
+                    {
+                        "start": 85,
+                        "end": 93,
+                        "text": 19,
+                        "ref_id": "BIBREF19"
+                    },
+                    {
+                        "start": 147,
+                        "end": 155,
+                        "text": 17,
+                        "ref_id": "BIBREF20"
+                    },
+                    {
+                        "start": 327,
+                        "end": 335,
+                        "text": 10,
+                        "ref_id": "BIBREF21"
+                    }
+                ],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experimentation",
+                "sec_num": "4"
+            },
+            {
+                "text": "Table TABREF24 presents the quantitative results of different methods. EasyInv achieves a competitive LPIPS score of 0.321, better than ReNoise (0.316) and Fixed-Point Iteration (0.373), indicating closer perceptual similarity to the original image. For SSIM, EasyInv achieves the highest score of 0.646, showing superior structural similarity crucial for maintaining image coherence. For PSNR, EasyInv scores 30.189, close to ReNoise's highest score of 31.025, indicating high image fidelity. EasyInv completes the inversion process in the fastest time of 5 seconds, matching DDIM Inversion, and significantly quicker than ReNoise (16 seconds) and Fixed-Point Iteration (14 seconds), highlighting its efficiency without compromising on quality. In summary, EasyInv performs strongly across all metrics, with the highest SSIM score indicating effective preservation of image structure. Its efficient inversion makes it highly suitable for real-world applications where both quality and speed are crucial.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 6,
+                        "end": 14,
+                        "text": "1",
+                        "ref_id": "TABREF24"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Experimentation::Quantitative Results",
+                "sec_num": "4.1"
+            },
+            {
+                "text": "Table TABREF25 compares EasyInv's performance in half-precision (float16) and full-precision (float32) formats. Both achieve the same LPIPS score of 0.321, indicating consistent perceptual similarity to the original image. Similarly, both achieve an SSIM score of 0.646, showing preserved structural integrity with high fidelity. For PSNR, half precision slightly outperforms full precision with scores of 30.189 and 30.184. This slight advantage in PSNR for half precision is noteworthy given its well reduced computation time. The most significant difference is observed in the time metric, where half precision completes the inversion process in 5 seconds, approximately 44% faster than full precision, which takes 9 seconds. This efficiency gain highlights EasyInv's exceptional optimization for half precision, offering faster speeds and reduced resources without compromising output quality.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 6,
+                        "end": 14,
+                        "text": "2",
+                        "ref_id": "TABREF25"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Experimentation::Quantitative Results",
+                "sec_num": "4.1"
+            },
+            {
+                "text": "We visually evaluate all methods using SD-XL and SD-V1-4. Figure FIGREF26 presents a comparison of several examples across all methods utilizing SD-XL. ReNoise struggles with images containing significant white areas, resulting in black images. The other two methods also perform poorly, especially evident in the clock example. Figure FIGREF27 displays the results obtained from the SD-V1-4 using images sourced from the internet. These images also feature large areas of white color. ReNoise consistently produces black images with these inputs, indicating an issue inherent to the method rather than the model. Fixed-Point Iteration and DDIM Inversion also fail to generate satisfactory results in such cases, suggesting these images pose challenges for inversion methods. Our method, shown in the figure, effectively addresses these challenges, demonstrating robustness and enhancing performance in handling special scenarios. These findings underscore the efficacy of our approach, particularly in addressing challenging cases that are less common in the COCO dataset.",
+                "cite_spans": [],
+                "ref_spans": [
+                    {
+                        "start": 65,
+                        "end": 73,
+                        "text": "3",
+                        "ref_id": "FIGREF26"
+                    },
+                    {
+                        "start": 336,
+                        "end": 344,
+                        "text": "4",
+                        "ref_id": "FIGREF27"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Experimentation::Qualitative Results",
+                "sec_num": "4.2"
+            },
+            {
+                "text": "Figure FIGREF29 presents more visual results of our method, with original images exclusively obtained from the COCO dataset BIBREF21 . The results are unequivocal: our approach consistently generates images that closely resemble their originals post-inversion and reconstruction. The variety of categories represented in these images underscores the broad applicability and consistent performance of our method. In aggregate, these findings affirm that our technique is not merely efficient but also remarkably robust, adeptly reconstructing images with a high level of precision and clarity.",
+                "cite_spans": [
+                    {
+                        "start": 124,
+                        "end": 132,
+                        "text": 10,
+                        "ref_id": "BIBREF21"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 7,
+                        "end": 15,
+                        "text": "5",
+                        "ref_id": "FIGREF29"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Experimentation::Qualitative Results",
+                "sec_num": "4.2"
+            },
+            {
+                "text": "To showcase the practical utility of our EasyInv, we have employed various inversion techniques within the realm of consistent image synthesis and editing. We have seamlessly integrated these inversion methods into MasaCtrl BIBREF6 , a widely-adopted image editing approach that extracts correlated local content and textures from source images to ensure consistency. For demonstrative purposes, we present an image of a \u201cpeach\u201d alongside the prompt \u201cA football.\u201d The impact of inversion quality is depicted in Figure FIGREF31 . In these instances, we utilize the inverted latents of the \u201cpeach\u201d image, as shown in Figure FIGREF27 , as the input for MasaCtrl BIBREF6 . Our ultimate goal is to generate an image of a football that retains the distinctive features of the \u201cpeach\u201d image. As evident from Figure FIGREF31 , our EasyInv achieves superior texture quality and a shape most closely resembling that of a football. From our perspective, images with extensive white areas constitute a significant category in actual image editing, given that they are a prevalent characteristic in conventional photography. However, such features often prove detrimental to the ReNoise method. Thus, for authentic image editing scenarios, our approach stands out as a preferable alternative, not to mention its commendable efficiency.",
+                "cite_spans": [
+                    {
+                        "start": 224,
+                        "end": 231,
+                        "text": 3,
+                        "ref_id": "BIBREF6"
+                    },
+                    {
+                        "start": 659,
+                        "end": 666,
+                        "text": 3,
+                        "ref_id": "BIBREF6"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 518,
+                        "end": 526,
+                        "text": "6",
+                        "ref_id": "FIGREF31"
+                    },
+                    {
+                        "start": 622,
+                        "end": 630,
+                        "text": "4",
+                        "ref_id": "FIGREF27"
+                    },
+                    {
+                        "start": 808,
+                        "end": 816,
+                        "text": "6",
+                        "ref_id": "FIGREF31"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Experimentation::Downstream Image Editing",
+                "sec_num": "4.3"
+            },
+            {
+                "text": "One potential risk associated with our approach is the phenomenon known as \u201cover-denoising,\u201d which occurs when there is a disproportionate focus on achieving a pristine final-step latent state. This can occasionally result in overly smooth image outputs, as exemplified by the \u201cpeach\u201d figure in Figure FIGREF27 . In the context of most real-world image editing tasks, this is not typically an issue, as these tasks often involve style migration, which inherently alters the details of the original image. However, in specific applications, such as using diffusion models for creating advertisements, this could pose a challenge. Nonetheless, our experimental results highlight that the method's two key benefits significantly outweigh this minor shortcoming. Firstly, it is capable of delivering satisfactory outcomes even with models that may under-perform relative to other methods, as shown in the above experiments. Secondly, it enhances inversion efficiency by reverting to the original DDIM Inversion baseline BIBREF5 , thereby eliminating the necessity for iterative optimizations. This strategy not only simplifies the process but also ensures the maintenance of high-quality outputs, marking it as a noteworthy advancement over current methodologies.",
+                "cite_spans": [
+                    {
+                        "start": 1016,
+                        "end": 1023,
+                        "text": 4,
+                        "ref_id": "BIBREF5"
+                    }
+                ],
+                "ref_spans": [
+                    {
+                        "start": 302,
+                        "end": 310,
+                        "text": "4",
+                        "ref_id": "FIGREF27"
+                    }
+                ],
+                "eq_spans": [],
+                "section": "Experimentation::Limitations",
+                "sec_num": "4.4"
+            },
+            {
+                "text": "In conclusion, our research has made significant strides with the introduction of EasyInv. As we look ahead, our commitment to advancing this technology remains unwavering. Our future research agenda will be focused on the persistent enhancement and optimization of the techniques in this paper. This will be done with the ultimate goal of ensuring that our methodology is not only robust and efficient but also highly adaptable to the diverse and ever-evolving needs of industrial applications.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Experimentation::Limitations",
+                "sec_num": "4.4"
+            },
+            {
+                "text": "Our EasyInv presents a significant advancement in the field of DDIM Inversion by addressing the inefficiencies and performance limitations in traditional iterative optimization methods. By emphasizing the importance of the initial latent state and introducing a refined strategy for approximating inversion noise, EasyInv enhances both the accuracy efficiency of the inversion process. Our method strategically reinforces the initial latent state's influence, mitigating the impact of noise and ensuring a closer reconstruction to the original image. This approach not only matches but often surpasses the performance of existing DDIM Inversion methods, especially in scenarios with limited model precision or computational resources. EasyInv also demonstrates a remarkable improvement in inference efficiency, achieving approximately three times faster processing than standard iterative techniques. Through extensive evaluations, we have shown that EasyInv consistently delivers high-quality results, making it a robust and efficient solution for image inversion tasks. The simplicity and effectiveness of EasyInv underscore its potential for broader applications, promoting greater accessibility and advancement in the field of diffusion models.",
+                "cite_spans": [],
+                "ref_spans": [],
+                "eq_spans": [],
+                "section": "Conclusion",
+                "sec_num": "5"
+            }
+        ],
+        "back_matter": [],
+        "bib_entries": {
+            "BIBREF16": {
+                "ref_id": "BIBREF16",
+                "title": "Iterative procedures for nonlinear integral equations",
+                "authors": [
+                    {
+                        "first": "D",
+                        "middle": [
+                            "G"
+                        ],
+                        "last": "Anderson",
+                        "suffix": ""
+                    }
+                ],
+                "year": 1965,
+                "venue": "Journal of the ACM",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 0,
+                "urls": [],
+                "raw_text": "Anderson, D. G. 1965. Iterative procedures for nonlinear integral equations. Journal of the ACM.",
+                "links": null
+            },
+            "BIBREF17": {
+                "ref_id": "BIBREF17",
+                "title": "Fixed-point algorithms for inverse problems in science and engineering",
+                "authors": [
+                    {
+                        "first": "H",
+                        "middle": [
+                            "H"
+                        ],
+                        "last": "Bauschke",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [
+                            "S"
+                        ],
+                        "last": "Burachik",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [
+                            "L"
+                        ],
+                        "last": "Combettes",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "V",
+                        "middle": [],
+                        "last": "Elser",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [
+                            "R"
+                        ],
+                        "last": "Luke",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Wolkowicz",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2011,
+                "venue": "",
+                "volume": "49",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 1,
+                "urls": [],
+                "raw_text": "Bauschke, H. H.; Burachik, R. S.; Combettes, P. L.; Elser, V.; Luke, D. R.; and Wolkowicz, H. 2011. Fixed-point algorithms for inverse problems in science and engineering, volume 49. Springer Science & Business Media.",
+                "links": null
+            },
+            "BIBREF1": {
+                "ref_id": "BIBREF1",
+                "title": "Improving image generation with better captions",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Betker",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "G",
+                        "middle": [],
+                        "last": "Goh",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Jing",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Brooks",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Li",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "L",
+                        "middle": [],
+                        "last": "Ouyang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Zhuang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Lee",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Guo",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "Computer Science",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 2,
+                "urls": [],
+                "raw_text": "Betker, J.; Goh, G.; Jing, L.; Brooks, T.; Wang, J.; Li, L.; Ouyang, L.; Zhuang, J.; Lee, J.; Guo, Y.; et al. 2023. Improving image generation with better captions. Computer Science.",
+                "links": null
+            },
+            "BIBREF6": {
+                "ref_id": "BIBREF6",
+                "title": "MasaCtrl: Tuning-Free Mutual Self-Attention Control for Consistent Image Synthesis and Editing",
+                "authors": [
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Cao",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Qi",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Shan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Qie",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Zheng",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "International Conference on Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 3,
+                "urls": [],
+                "raw_text": "Cao, M.; Wang, X.; Qi, Z.; Shan, Y.; Qie, X.; and Zheng, Y. 2023. MasaCtrl: Tuning-Free Mutual Self-Attention Control for Consistent Image Synthesis and Editing. In International Conference on Computer Vision.",
+                "links": null
+            },
+            "BIBREF5": {
+                "ref_id": "BIBREF5",
+                "title": "DiffEdit: Diffusion-based Semantic Image Editing with Mask Guidance",
+                "authors": [
+                    {
+                        "first": "G",
+                        "middle": [],
+                        "last": "Couairon",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Verbeek",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Schwenk",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Cord",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "International Conference on Learning Representations",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 4,
+                "urls": [],
+                "raw_text": "Couairon, G.; Verbeek, J.; Schwenk, H.; and Cord, M. 2023. DiffEdit: Diffusion-based Semantic Image Editing with Mask Guidance. In International Conference on Learning Representations.",
+                "links": null
+            },
+            "BIBREF12": {
+                "ref_id": "BIBREF12",
+                "title": "Prompt tuning inversion for text-driven image editing using diffusion models",
+                "authors": [
+                    {
+                        "first": "W",
+                        "middle": [],
+                        "last": "Dong",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Xue",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Duan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Han",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "International Conference on Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 5,
+                "urls": [],
+                "raw_text": "Dong, W.; Xue, S.; Duan, X.; and Han, S. 2023. Prompt tuning inversion for text-driven image editing using diffusion models. In International Conference on Computer Vision.",
+                "links": null
+            },
+            "BIBREF9": {
+                "ref_id": "BIBREF9",
+                "title": "ReNoise: Real Image Inversion Through Iterative Noising",
+                "authors": [
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Garibi",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "O",
+                        "middle": [],
+                        "last": "Patashnik",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Voynov",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Averbuch-Elor",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Cohen-Or",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2024,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2403.14602"
+                    ]
+                },
+                "num": 6,
+                "urls": [],
+                "raw_text": "Garibi, D.; Patashnik, O.; Voynov, A.; Averbuch-Elor, H.; and Cohen-Or, D. 2024. ReNoise: Real Image Inversion Through Iterative Noising. arXiv preprint arXiv:2403.14602.",
+                "links": null
+            },
+            "BIBREF4": {
+                "ref_id": "BIBREF4",
+                "title": "Prompt-to-Prompt Image Editing with Cross-Attention Control",
+                "authors": [
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Hertz",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Mokady",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Tenenbaum",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Aberman",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Pritch",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Cohen-Or",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2022,
+                "venue": "International Conference on Learning Representations",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 7,
+                "urls": [],
+                "raw_text": "Hertz, A.; Mokady, R.; Tenenbaum, J.; Aberman, K.; Pritch, Y.; and Cohen-or, D. 2022. Prompt-to-Prompt Image Editing with Cross-Attention Control. In International Conference on Learning Representations.",
+                "links": null
+            },
+            "BIBREF14": {
+                "ref_id": "BIBREF14",
+                "title": "Denoising diffusion probabilistic models",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Ho",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Jain",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Abbeel",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2020,
+                "venue": "Advances in neural information processing systems",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 8,
+                "urls": [],
+                "raw_text": "Ho, J.; Jain, A.; and Abbeel, P. 2020. Denoising diffusion probabilistic models. Advances in neural information processing systems.",
+                "links": null
+            },
+            "BIBREF11": {
+                "ref_id": "BIBREF11",
+                "title": "Direct Inversion: Boosting Diffusion-based Editing with 3 Lines of Code",
+                "authors": [
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Ju",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Zeng",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Bian",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Q",
+                        "middle": [],
+                        "last": "Xu",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 9,
+                "urls": [],
+                "raw_text": "Ju, X.; Zeng, A.; Bian, Y.; Liu, S.; and Xu, Q. 2023. Direct Inversion: Boosting Diffusion-based Editing with 3 Lines of Code. In International Conference on Learning Representations.",
+                "links": null
+            },
+            "BIBREF21": {
+                "ref_id": "BIBREF21",
+                "title": "Microsoft COCO: Common Objects in Context",
+                "authors": [
+                    {
+                        "first": "T.-Y",
+                        "middle": [],
+                        "last": "Lin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Maire",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Belongie",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Hays",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Perona",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Ramanan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Doll\u00e1r",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [
+                            "L"
+                        ],
+                        "last": "Zitnick",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2014,
+                "venue": "European Conference on Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 10,
+                "urls": [],
+                "raw_text": "Lin, T.-Y.; Maire, M.; Belongie, S.; Hays, J.; Perona, P.; Ramanan, D.; Doll\u00e1r, P.; and Zitnick, C. L. 2014. Microsoft COCO: Common Objects in Context. In European Conference on Computer Vision.",
+                "links": null
+            },
+            "BIBREF7": {
+                "ref_id": "BIBREF7",
+                "title": "Portrait Diffusion: Training-free Face Stylization with Chain-of-Painting",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Liu",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [],
+                        "last": "Huang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Jin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "He",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2312.02212"
+                    ]
+                },
+                "num": 11,
+                "urls": [],
+                "raw_text": "Liu, J.; Huang, H.; Jin, C.; and He, R. 2023. Portrait Diffusion: Training-free Face Stylization with Chain-of-Painting. arXiv preprint arXiv:2312.02212.",
+                "links": null
+            },
+            "BIBREF10": {
+                "ref_id": "BIBREF10",
+                "title": "Null-text inversion for editing real images using guided diffusion models",
+                "authors": [
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Mokady",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Hertz",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Aberman",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Y",
+                        "middle": [],
+                        "last": "Pritch",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Cohen-Or",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 12,
+                "urls": [],
+                "raw_text": "Mokady, R.; Hertz, A.; Aberman, K.; Pritch, Y.; and Cohen-Or, D. 2023. Null-text inversion for editing real images using guided diffusion models. In Computer Vision and Pattern Recognition.",
+                "links": null
+            },
+            "BIBREF2": {
+                "ref_id": "BIBREF2",
+                "title": "",
+                "authors": [
+                    {
+                        "first": "",
+                        "middle": [],
+                        "last": "Openai",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2024,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 13,
+                "urls": [
+                    "https://chat.openai.com/"
+                ],
+                "raw_text": "Openai. 2024. ChatGPT. https://chat.openai.com/, Last accessed on 2024-2-27.",
+                "links": null
+            },
+            "BIBREF8": {
+                "ref_id": "BIBREF8",
+                "title": "Effective Real Image Editing with Accelerated Iterative Diffusion Inversion",
+                "authors": [
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Pan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Gherardi",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "X",
+                        "middle": [],
+                        "last": "Xie",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Huang",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "International Conference on Computer Vision",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 14,
+                "urls": [],
+                "raw_text": "Pan, Z.; Gherardi, R.; Xie, X.; and Huang, S. 2023. Effective Real Image Editing with Accelerated Iterative Diffusion Inversion. In International Conference on Computer Vision.",
+                "links": null
+            },
+            "BIBREF13": {
+                "ref_id": "BIBREF13",
+                "title": "SDXL: Improving Latent Diffusion Models for High-Resolution Image Synthesis",
+                "authors": [
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Podell",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "English",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Lacey",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Blattmann",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "T",
+                        "middle": [],
+                        "last": "Dockhorn",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "M\u00fcller",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Penna",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Rombach",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2023,
+                "venue": "International Conference on Learning Representations",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 15,
+                "urls": [],
+                "raw_text": "Podell, D.; English, Z.; Lacey, K.; Blattmann, A.; Dockhorn, T.; M\u00fcller, J.; Penna, J.; and Rombach, R. 2023. SDXL: Improving Latent Diffusion Models for High-Resolution Image Synthesis. In International Conference on Learning Representations.",
+                "links": null
+            },
+            "BIBREF0": {
+                "ref_id": "BIBREF0",
+                "title": "High-resolution image synthesis with latent diffusion models",
+                "authors": [
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Rombach",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Blattmann",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "D",
+                        "middle": [],
+                        "last": "Lorenz",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Esser",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "B",
+                        "middle": [],
+                        "last": "Ommer",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2022,
+                "venue": "Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 16,
+                "urls": [],
+                "raw_text": "Rombach, R.; Blattmann, A.; Lorenz, D.; Esser, P.; and Ommer, B. 2022. High-resolution image synthesis with latent diffusion models. In Computer Vision and Pattern Recognition.",
+                "links": null
+            },
+            "BIBREF20": {
+                "ref_id": "BIBREF20",
+                "title": "Very deep convolutional networks for large-scale image recognition",
+                "authors": [
+                    {
+                        "first": "K",
+                        "middle": [],
+                        "last": "Simonyan",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [],
+                        "last": "Zisserman",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2015,
+                "venue": "International Conference on Learning Representations",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 17,
+                "urls": [],
+                "raw_text": "Simonyan, K.; and Zisserman, A. 2015. Very deep convolutional networks for large-scale image recognition. In International Conference on Learning Representations.",
+                "links": null
+            },
+            "BIBREF15": {
+                "ref_id": "BIBREF15",
+                "title": "Denoising Diffusion Implicit Models",
+                "authors": [
+                    {
+                        "first": "J",
+                        "middle": [],
+                        "last": "Song",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "C",
+                        "middle": [],
+                        "last": "Meng",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "S",
+                        "middle": [],
+                        "last": "Ermon",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2020,
+                "venue": "International Conference on Learning Representations",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 18,
+                "urls": [],
+                "raw_text": "Song, J.; Meng, C.; and Ermon, S. 2020. Denoising Diffusion Implicit Models. In International Conference on Learning Representations.",
+                "links": null
+            },
+            "BIBREF19": {
+                "ref_id": "BIBREF19",
+                "title": "Image quality assessment: from error visibility to structural similarity",
+                "authors": [
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Wang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [
+                            "C"
+                        ],
+                        "last": "Bovik",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "H",
+                        "middle": [
+                            "R"
+                        ],
+                        "last": "Sheikh",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "E",
+                        "middle": [
+                            "P"
+                        ],
+                        "last": "Simoncelli",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2004,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 19,
+                "urls": [],
+                "raw_text": "Wang, Z.; Bovik, A. C.; Sheikh, H. R.; and Simoncelli, E. P. 2004. Image quality assessment: from error visibility to structural similarity. IEEE transactions on image processing.",
+                "links": null
+            },
+            "BIBREF18": {
+                "ref_id": "BIBREF18",
+                "title": "The unreasonable effectiveness of deep features as a perceptual metric",
+                "authors": [
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "P",
+                        "middle": [],
+                        "last": "Isola",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "A",
+                        "middle": [
+                            "A"
+                        ],
+                        "last": "Efros",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "E",
+                        "middle": [],
+                        "last": "Shechtman",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "Wang",
+                        "middle": [],
+                        "last": "",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2018,
+                "venue": "Computer Vision and Pattern Recognition",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {},
+                "num": 20,
+                "urls": [],
+                "raw_text": "Zhang, R.; Isola, P.; Efros, A. A.; Shechtman, E.; and Wang, O. 2018. The unreasonable effectiveness of deep features as a perceptual metric. In Computer Vision and Pattern Recognition.",
+                "links": null
+            },
+            "BIBREF3": {
+                "ref_id": "BIBREF3",
+                "title": "ObjectAdd: Adding Objects into Image via a Training-Free Diffusion Modification Fashion",
+                "authors": [
+                    {
+                        "first": "Z",
+                        "middle": [],
+                        "last": "Zhang",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "M",
+                        "middle": [],
+                        "last": "Lin",
+                        "suffix": ""
+                    },
+                    {
+                        "first": "R",
+                        "middle": [],
+                        "last": "Ji",
+                        "suffix": ""
+                    }
+                ],
+                "year": 2024,
+                "venue": "",
+                "volume": "",
+                "issue": "",
+                "pages": "",
+                "other_ids": {
+                    "arXiv": [
+                        "arXiv:2404.17230"
+                    ]
+                },
+                "num": 21,
+                "urls": [],
+                "raw_text": "Zhang, Z.; Lin, M.; and Ji, R. 2024. ObjectAdd: Adding Objects into Image via a Training-Free Diffusion Modification Fashion. arXiv preprint arXiv:2404.17230.",
+                "links": null
+            }
+        },
+        "ref_entries": {
+            "EQREF5": {
+                "text": "\ud835\udc33 t-1 =\u03b1 t-1  \u03b1 t \ud835\udc33 t +1 \u03b1 t-1 -1 - 1 \u03b1 t -1\u00b7\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y),",
+                "latex": "\\mathbf {z}_{t-1} = \\sqrt{\\frac{\\alpha _{t-1}}{\\alpha _t}}\\mathbf {z}_t + \\Bigg (\\sqrt{\\frac{1}{\\alpha _{t-1}} - 1} - \\sqrt{\\frac{1}{\\alpha _t} - 1} \\Bigg )\\cdot \\varepsilon _{\\theta }\\big (\\mathbf {z}_t,t,\\tau _{\\theta }(y)\\big ),",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub><mo>&#x0003D;</mo><msqrt><mrow><mfrac><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow><mrow><msub><mi>&#x003B1;</mi><mi>t</mi></msub></mrow></mfrac></mrow></msqrt><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>&#x0002B;</mo><mo>\\Bigg</mo><mo stretchy=\"false\">&#x00028;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>&#x003B1;</mi><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msub></mrow></mfrac><mo>&#x02212;</mo><mn>1</mn></mrow></msqrt><mo>&#x02212;</mo><msqrt><mrow><mfrac><mrow><mn>1</mn></mrow><mrow><msub><mi>&#x003B1;</mi><mi>t</mi></msub></mrow></mfrac><mo>&#x02212;</mo><mn>1</mn></mrow></msqrt><mo>\\Bigg</mo><mo stretchy=\"false\">&#x00029;</mo><mo>&#x022C5;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>,</mo></mrow></math>",
+                "type_str": "equation",
+                "num": "1"
+            },
+            "EQREF6": {
+                "text": "d(\ud835\udc33 t )=\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y).",
+                "latex": "d(\\mathbf {z}_t) = \\varepsilon _{\\theta }\\big (\\mathbf {z}_t,t,\\tau _{\\theta }(y)\\big ).",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>.</mo></mrow></math>",
+                "type_str": "equation",
+                "num": "2"
+            },
+            "EQREF7": {
+                "text": "\ud835\udc33 t * =g\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y)=\u03b1 t  \u03b1 t-1 \ud835\udc33 t-1 * -\u03b1 t  \u03b1 t-1 1 \u03b1 t-1 -1 - 1 \u03b1 t -1\u00b7\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y),",
+                "latex": "\\begin{split}\n\\mathbf {z}^*_t &= g\\left(\\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1},t-1,\\tau _{\\theta }(y)\\big )\\right) \\\\&= \\sqrt{\\frac{\\alpha _{t}}{\\alpha _{t-1}}}\\mathbf {z}^*_{t-1} -\\\\& \\sqrt{\\frac{\\alpha _{t}}{\\alpha _{t-1}}}\\Bigg (\\sqrt{\\frac{1}{\\alpha _{t-1}} - 1} - \\sqrt{\\frac{1}{\\alpha _t} - 1} \\Bigg ) \\cdot \\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1},t-1,\\tau _{\\theta }(y)\\big ),\n\\end{split}",
+                "mathml": "",
+                "type_str": "equation",
+                "num": "3"
+            },
+            "EQREF8": {
+                "text": "\u03b5 t * =\u03b5 \u03b8 \ud835\udc33 t-1 *  , t - 1 , \u03c4 \u03b8  (y),\u03b5 t =\u03b5 \u03b8 \ud835\udc33 t  , t , \u03c4 \u03b8  (y).",
+                "latex": "\\varepsilon _{t}^* = \\varepsilon _{\\theta }\\big (\\mathbf {z}^*_{t-1},t-1,\\tau _{\\theta }(y)\\big ), \\qquad \\varepsilon _t = \\varepsilon _{\\theta }\\big (\\mathbf {z}_t,t,\\tau _{\\theta }(y)\\big ).",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mrow><mi>t</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mi>,</mi></msub><mo>t</mo><mo>&#x02212;</mo><mn>1</mn><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>,</mo><mspace width=\"0.167em\" /><msub><mi>&#x003B5;</mi><mi>t</mi></msub><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>,</mo><mo>t</mo><mo>,</mo><msub><mi>&#x003C4;</mi><mrow><mi>&#x003B8;</mi></mrow></msub><mo stretchy=\"false\">&#x00028;</mo><mo>y</mo><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>.</mo></mrow></math>",
+                "type_str": "equation",
+                "num": "4"
+            },
+            "EQREF10": {
+                "text": "\u03b5 t * =\u03b5 t .",
+                "latex": "\\varepsilon _t^* = \\varepsilon _t.",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><msub><mi>&#x003B5;</mi><mi>t</mi></msub><mi>.</mi></mrow></math>",
+                "type_str": "equation",
+                "num": "5"
+            },
+            "EQREF11": {
+                "text": "\ud835\udc33 t * =g(\u03b5 t * ),",
+                "latex": "\\mathbf {z}^*_t = g(\\varepsilon _t^*),",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mi>t</mi><mo>&#x0003D;</mo></msub><mo>g</mo><mo stretchy=\"false\">&#x00028;</mo><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo stretchy=\"false\">&#x00029;</mo><mo>,</mo></mrow></math>",
+                "type_str": "equation",
+                "num": "6"
+            },
+            "EQREF12": {
+                "text": "\ud835\udc33 t =\ud835\udc33 t * .",
+                "latex": "\\mathbf {z}_t = \\mathbf {z}_t^*.",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo>&#x0003D;</mo><msubsup><mrow><mi>z</mi></mrow><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo>.</mo></mrow></math>",
+                "type_str": "equation",
+                "num": "7"
+            },
+            "EQREF13": {
+                "text": "d(\ud835\udc33 t )=dg ( \u03b5 t *  ).",
+                "latex": "d\\big (\\mathbf {z}_t) = d\\big (g(\\varepsilon _t^*)\\big ).",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><mi>d</mi><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><msub><mrow><mi>z</mi></mrow><mi>t</mi></msub><mo stretchy=\"false\">&#x00029;</mo><mo>&#x0003D;</mo><mo>d</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00028;</mo><mo>g</mo><mo stretchy=\"false\">&#x00028;</mo><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo stretchy=\"false\">&#x00029;</mo><mo>\\big</mo><mo stretchy=\"false\">&#x00029;</mo><mo>.</mo></mrow></math>",
+                "type_str": "equation",
+                "num": "8"
+            },
+            "EQREF14": {
+                "text": "\u03b5 t * =dg ( \u03b5 t *  ).",
+                "latex": "\\varepsilon _{t}^* = d\\big (g(\\varepsilon _t^*)\\big ).",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msubsup><mi>&#x003B5;</mi><mrow><mi>t</mi></mrow><mo>&#x0002A;</mo></msubsup><mo>&#x0003D;</mo><mi>d</mi><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><mi>g</mi><mo stretchy=\"false\">&#x00028;</mo><msubsup><mi>&#x003B5;</mi><mi>t</mi><mo>&#x0002A;</mo></msubsup><mo stretchy=\"false\">&#x00029;</mo><mi>\\big</mi><mo stretchy=\"false\">&#x00029;</mo><mi>.</mi></mrow></math>",
+                "type_str": "equation",
+                "num": "9"
+            },
+            "EQREF15": {
+                "text": "(\u03b5 t * ) n =dg (\u03b5 t * ) n-1 ,",
+                "latex": "(\\varepsilon ^*_{t})^n = d\\big (g(\\varepsilon ^*_{t})^{n-1}\\big ),",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mi>n</mi></msup><mo>&#x0003D;</mo><mi>d</mi><mi>\\big</mi><mo stretchy=\"false\">&#x00028;</mo><mi>g</mi><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mi>\\big</mi><mo stretchy=\"false\">&#x00029;</mo><mi>,</mi></mrow></math>",
+                "type_str": "equation",
+                "num": "10"
+            },
+            "EQREF16": {
+                "text": "(\ud835\udc33 t * ) n+1 =g(0.5\u00b7(\u03b5 t * ) n +0.5\u00b7(\u03b5 t * ) n-1 ),",
+                "latex": "({\\mathbf {z}^{*}_{t}})^{n+1} = g(0.5 \\cdot (\\varepsilon ^*_{t})^n+0.5 \\cdot (\\varepsilon ^*_{t})^{n-1}),",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><mrow><msubsup><mrow><mi>z</mi></mrow><mrow><mi>t</mi></mrow><mrow><mo>&#x0002A;</mo></mrow></msubsup></mrow><mo stretchy=\"false\">&#x00029;</mo></mrow><mrow><mi>n</mi><mo>&#x0002B;</mo><mn>1</mn></mrow></msup><mo>&#x0003D;</mo><mi>g</mi><mo stretchy=\"false\">&#x00028;</mo><mn>0.5</mn><mo>&#x022C5;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mi>n</mi></msup><mo>&#x0002B;</mo><mn>0.5</mn><mo>&#x022C5;</mo><msup><mrow><mo stretchy=\"false\">&#x00028;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo stretchy=\"false\">&#x00029;</mo></msub></mrow><mrow><mi>n</mi><mo>&#x02212;</mo><mn>1</mn></mrow></msup><mo stretchy=\"false\">&#x00029;</mo><mi>,</mi></mrow></math>",
+                "type_str": "equation",
+                "num": "11"
+            },
+            "EQREF18": {
+                "text": "\ud835\udc33 t * =\u03b1 \u00af t \ud835\udc33 t-1 * +\u03b2 \u00af t \u03b5 t * ,",
+                "latex": "\\mathbf {z}^*_{t}=\\bar{\\alpha }_{t}\\mathbf {z}^*_{t-1} + \\bar{\\beta }_{t}\\varepsilon ^*_{t},",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo>&#x0003D;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi></mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B2;</mo></mrow><mrow><mi>t</mi></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mi>,</mi></msub></mrow></math>",
+                "type_str": "equation",
+                "num": "12"
+            },
+            "EQREF19": {
+                "text": "\ud835\udc33 t-1 * =\u03b1 \u00af t-1 \ud835\udc33 t-2 * +\u03b2 \u00af t-1 \u03b5 t-1 * ,",
+                "latex": "\\mathbf {z}^*_{t-1}=\\bar{\\alpha }_{t-1}\\mathbf {z}^*_{t-2} + \\bar{\\beta }_{t-1}\\varepsilon ^*_{t-1},",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mo>&#x0003D;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>2</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B2;</mo></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mi>,</mi></msub></mrow></math>",
+                "type_str": "equation",
+                "num": "13"
+            },
+            "EQREF20": {
+                "text": "\ud835\udc33 t * =\u03b1 \u00af t \u03b1 \u00af t-1 \ud835\udc33 t-2 * +\u03b1 \u00af t \u03b2 \u00af t-1 \u03b5 t-1 * +\u03b2 \u00af t \u03b5 t * .",
+                "latex": "\\mathbf {z}^*_{t}=\\bar{\\alpha }_{t}\\bar{\\alpha }_{t-1}\\mathbf {z}^*_{t-2} + \\bar{\\alpha }_{t}\\bar{\\beta }_{t-1}\\varepsilon ^*_{t-1} + \\bar{\\beta }_{t}\\varepsilon ^*_{t}.",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo>&#x0003D;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi></mrow><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>2</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mrow><mi>t</mi></mrow><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B2;</mi></mrow><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi><mo>&#x02212;</mo><mn>1</mn></mrow><mo>&#x0002B;</mo></msub><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B2;</mi></mrow><mrow><mi>t</mi></mrow><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mi>.</mi></msub></mrow></math>",
+                "type_str": "equation",
+                "num": "14"
+            },
+            "EQREF21": {
+                "text": "\ud835\udc33 t * =(\u220f i=1 t \u03b1 \u00af i )\ud835\udc33 0 * +\u2211 i=1 t (\u03b2 \u00af i \u220f j=i+1 t \u03b1 \u00af j )\u03b5 i * .",
+                "latex": "\\mathbf {z}^*_{t} = (\\prod _{i=1}^{t}\\bar{\\alpha }_i)\\mathbf {z}^*_{0} + \\sum _{i=1}^{t}(\\bar{\\beta }_i\\prod _{j = i+1}^{t}\\bar{\\alpha }_j)\\varepsilon ^*_i.",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mi>t</mi></mrow><mo>&#x0003D;</mo></msub><mo stretchy=\"false\">&#x00028;</mo><msubsup><mo>&#x0220F;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B1;</mo></mrow><mi>i</mi><mo stretchy=\"false\">&#x00029;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mn>0</mn></mrow><mo>&#x0002B;</mo></msub><msubsup><mo>&#x02211;</mo><mrow><mi>i</mi><mo>&#x0003D;</mo><mn>1</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mo stretchy=\"false\">&#x00028;</mo><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mo>&#x003B2;</mo></mrow><mi>i</mi><msubsup><mo>&#x0220F;</mo><mrow><mi>j</mi><mo>&#x0003D;</mo><mi>i</mi><mo>&#x0002B;</mo><mn>1</mn></mrow><mrow><mi>t</mi></mrow></msubsup><mover><mi>_</mi><mo stretchy=\"true\">&#x000AF;</mo></mover><mrow><mi>&#x003B1;</mi></mrow><mi>j</mi><mo stretchy=\"false\">&#x00029;</mo><msup><mi>&#x003B5;</mi><mo>&#x0002A;</mo></msup><msub><mi>i</mi><mi>.</mi></msub></mrow></math>",
+                "type_str": "equation",
+                "num": "15"
+            },
+            "EQREF22": {
+                "text": "\ud835\udc33 t \u00af * =\u03b7\ud835\udc33 t \u00af * +(1-\u03b7)\ud835\udc33 t \u00af-1 * ,",
+                "latex": "\\mathbf {z}^*_{\\bar{t}}=\\eta \\mathbf {z}^*_{\\bar{t}} + (1-\\eta ) \\mathbf {z}^*_{{\\bar{t}-1}},",
+                "mathml": "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" display=\"inline\"><mrow><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow><mo>&#x0003D;</mo></msub><mo>&#x003B7;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover></mrow><mo>&#x0002B;</mo></msub><mo stretchy=\"false\">&#x00028;</mo><mn>1</mn><mo>&#x02212;</mo><mo>&#x003B7;</mo><mo stretchy=\"false\">&#x00029;</mo><msup><mrow><mi>z</mi></mrow><mo>&#x0002A;</mo></msup><msub><mrow><mrow><mover><mrow><mi>t</mi></mrow><mo stretchy=\"true\">&#x000AF;</mo></mover><mo>&#x02212;</mo><mn>1</mn></mrow></mrow><mi>,</mi></msub></mrow></math>",
+                "type_str": "equation",
+                "num": "16"
+            },
+            "EQREF23": {
+                "text": "\ud835\udc33 t \u00af-1 * -\ud835\udc33 t \u00af * =(\u220f i=1 t \u00af-1 \u03b1 \u00af i )(1-\u03b1 \u00af t \u00af )\ud835\udc33 0 +(1-\u03b1 \u00af t \u00af )\u2211 i=1 t \u00af-1 (\u03b2 \u00af i \u220f j=i+1 t \u00af-1 \u03b1 \u00af j )\u03b5 i * +(-\u03b2 \u00af t )\u03b5 t \u00af *",
+                "latex": "\\begin{split}\n\\mathbf {z}^*_{{\\bar{t}-1}} - \\mathbf {z}^*_{\\bar{t}} = (\\prod _{i=1}^{\\bar{t}-1}\\bar{\\alpha }_i)(1 - \\bar{\\alpha }_{\\bar{t}})\\mathbf {z}_{0} \\\\+ (1 - \\bar{\\alpha }_{\\bar{t}})\\sum _{i=1}^{\\bar{t}-1}(\\bar{\\beta }_i\\prod _{j = i+1}^{\\bar{t}-1}\\bar{\\alpha }_j)\\varepsilon ^*_i + (-\\bar{\\beta }_{t})\\varepsilon ^*_{\\bar{t}}\n\\end{split}",
+                "mathml": "",
+                "type_str": "equation",
+                "num": "17"
+            },
+            "FIGREF1": {
+                "text": "Performance comparison of inversion methods including vanilla DDIM Inversion BIBREF5 , Fixed-Point Iteration BIBREF8 , ReNoise BIBREF9 and our EasyInv. The proposed EasyInv performs well upon different diffusion models of SD-V1-4 and SD-XL.",
+                "fig_num": null,
+                "type_str": "figure",
+                "uris": [
+                    "visual_hat_result_together_cut.pdf"
+                ],
+                "num": "1"
+            },
+            "FIGREF2": {
+                "text": "Visualization of the latent states midway through all denoising steps for various inversion methods. Our EasyInv shows its enhanced convergence by closely approximating the original image.",
+                "fig_num": null,
+                "type_str": "figure",
+                "uris": [
+                    "visual_hat_noise_together_cut.pdf"
+                ],
+                "num": "2"
+            },
+            "FIGREF26": {
+                "text": "A visual assessment of various inversion techniques utilizing the SD-XL model.",
+                "fig_num": null,
+                "type_str": "figure",
+                "uris": [
+                    "visual_SDXL.pdf"
+                ],
+                "num": "3"
+            },
+            "FIGREF27": {
+                "text": "A visual assessment of various inversion techniques utilizing the SD-V1-4 model.",
+                "fig_num": null,
+                "type_str": "figure",
+                "uris": [
+                    "visual_SDV1-4.pdf"
+                ],
+                "num": "4"
+            },
+            "FIGREF29": {
+                "text": "More visual results of our EasyInv utilizing the SD-V1-4 model. *figureOriginal image *figureEasyInv (Ours) *figureOriginal image *figureEasyInv (Ours)",
+                "fig_num": null,
+                "type_str": "figure",
+                "uris": [],
+                "num": "5"
+            },
+            "FIGREF31": {
+                "text": "Results of MasaCtrl BIBREF6 with prompt \u201cA football\u201d, using inverted latent generated by different methods as input.",
+                "fig_num": null,
+                "type_str": "figure",
+                "uris": [
+                    "visual_masa_cut.pdf"
+                ],
+                "num": "6"
+            },
+            "TABREF24": {
+                "text": "A comparative analysis of quantitative outcomes utilizing the SD-V1-4 model.",
+                "content": [
+                    {
+                        "top-border": false,
+                        "bottom-border": false,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "",
+                                "latex": ""
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "LPIPS ( \u2193 )",
+                                "latex": "LPIPS ( \\downarrow )"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "SSIM ( \u2191 )",
+                                "latex": "SSIM ( \\uparrow )"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "PSNR ( \u2191 )",
+                                "latex": "PSNR ( \\uparrow )"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "Time ( \u2193 )",
+                                "latex": "Time ( \\downarrow )"
+                            }
+                        ]
+                    },
+                    {
+                        "top-border": false,
+                        "bottom-border": true,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "DDIM Inversion",
+                                "latex": "DDIM Inversion"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.328",
+                                "latex": "0.328"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.621",
+                                "latex": "0.621"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "29.717",
+                                "latex": "29.717"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "5s",
+                                "latex": "5s"
+                            }
+                        ]
+                    },
+                    {
+                        "top-border": false,
+                        "bottom-border": true,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "ReNoise",
+                                "latex": "ReNoise"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.316",
+                                "latex": "0.316"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.641",
+                                "latex": "0.641"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "31.025",
+                                "latex": "31.025"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "16s",
+                                "latex": "16s"
+                            }
+                        ]
+                    },
+                    {
+                        "top-border": false,
+                        "bottom-border": true,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "Fixed-Point Iteration",
+                                "latex": "Fixed-Point Iteration"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.373",
+                                "latex": "0.373"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.563",
+                                "latex": "0.563"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "29.107",
+                                "latex": "29.107"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "14s",
+                                "latex": "14s"
+                            }
+                        ]
+                    },
+                    {
+                        "top-border": false,
+                        "bottom-border": false,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "EasyInv (Ours)",
+                                "latex": "EasyInv (Ours)"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.321",
+                                "latex": "0.321"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.646",
+                                "latex": "0.646"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "30.189",
+                                "latex": "30.189"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "5s",
+                                "latex": "5s"
+                            }
+                        ]
+                    }
+                ],
+                "type_str": "table",
+                "html": "<table><tr><th></th><th>LPIPS ( \u2193 )</th><th>SSIM ( \u2191 )</th><th>PSNR ( \u2191 )</th><th>Time ( \u2193 )</th></tr><tr><th>DDIM Inversion</th><th>0.328</th><th>0.621</th><th>29.717</th><th>5s</th></tr><tr><th>ReNoise</th><th>0.316</th><th>0.641</th><th>31.025</th><th>16s</th></tr><tr><th>Fixed-Point Iteration</th><th>0.373</th><th>0.563</th><th>29.107</th><th>14s</th></tr><tr><td>EasyInv (Ours)</td><td>0.321</td><td>0.646</td><td>30.189</td><td>5s</td></tr></table>",
+                "num": "1"
+            },
+            "TABREF25": {
+                "text": "A comparative analysis of half- and full-precision EasyInv utilizing the SD-V1-4.",
+                "content": [
+                    {
+                        "top-border": false,
+                        "bottom-border": false,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "",
+                                "latex": ""
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "LPIPS ( \u2193 )",
+                                "latex": "LPIPS ( \\downarrow )"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "SSIM ( \u2191 )",
+                                "latex": "SSIM ( \\uparrow )"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "PSNR ( \u2191 )",
+                                "latex": "PSNR ( \\uparrow )"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "Time ( \u2193 )",
+                                "latex": "Time ( \\downarrow )"
+                            }
+                        ]
+                    },
+                    {
+                        "top-border": false,
+                        "bottom-border": true,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "Full Precision",
+                                "latex": "Full Precision"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.321",
+                                "latex": "0.321"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.646",
+                                "latex": "0.646"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "30.184",
+                                "latex": "30.184"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "9s",
+                                "latex": "9s"
+                            }
+                        ]
+                    },
+                    {
+                        "top-border": false,
+                        "bottom-border": false,
+                        "cells": [
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "Half Precision",
+                                "latex": "Half Precision"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.321",
+                                "latex": "0.321"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "0.646",
+                                "latex": "0.646"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "30.189",
+                                "latex": "30.189"
+                            },
+                            {
+                                "alignment": "center",
+                                "right-border": false,
+                                "left-border": false,
+                                "text": "5s",
+                                "latex": "5s"
+                            }
+                        ]
+                    }
+                ],
+                "type_str": "table",
+                "html": "<table><tr><th></th><th>LPIPS ( \u2193 )</th><th>SSIM ( \u2191 )</th><th>PSNR ( \u2191 )</th><th>Time ( \u2193 )</th></tr><tr><th>Full Precision</th><th>0.321</th><th>0.646</th><th>30.184</th><th>9s</th></tr><tr><td>Half Precision</td><td>0.321</td><td>0.646</td><td>30.189</td><td>5s</td></tr></table>",
+                "num": "2"
+            },
+            "SECREF1": {
+                "text": "Introduction",
+                "parent": null,
+                "type_str": "section",
+                "num": "1"
+            },
+            "SECREF2": {
+                "text": "Related Works",
+                "parent": null,
+                "type_str": "section",
+                "num": "2"
+            },
+            "SECREF3": {
+                "text": "Methodology",
+                "parent": null,
+                "type_str": "section",
+                "num": "3"
+            },
+            "SECREFU3": {
+                "text": "Preliminaries",
+                "parent": "SECREF3",
+                "type_str": "section",
+                "num": "3.1"
+            },
+            "SECREFU4": {
+                "text": "DDIM Inversion",
+                "parent": "SECREFU3",
+                "type_str": "section",
+                "num": "3.1.1"
+            },
+            "SECREFU9": {
+                "text": "Fixed-Point Iteration",
+                "parent": "SECREF3",
+                "type_str": "section",
+                "num": "3.2"
+            },
+            "SECREFU17": {
+                "text": "EasyInv",
+                "parent": "SECREF3",
+                "type_str": "section",
+                "num": "3.3"
+            },
+            "SECREF4": {
+                "text": "Experimentation",
+                "parent": null,
+                "type_str": "section",
+                "num": "4"
+            },
+            "SECREFU28": {
+                "text": "Quantitative Results",
+                "parent": "SECREF4",
+                "type_str": "section",
+                "num": "4.1"
+            },
+            "SECREFU30": {
+                "text": "Qualitative Results",
+                "parent": "SECREF4",
+                "type_str": "section",
+                "num": "4.2"
+            },
+            "SECREFU32": {
+                "text": "Downstream Image Editing",
+                "parent": "SECREF4",
+                "type_str": "section",
+                "num": "4.3"
+            },
+            "SECREFU33": {
+                "text": "Limitations",
+                "parent": "SECREF4",
+                "type_str": "section",
+                "num": "4.4"
+            },
+            "SECREF5": {
+                "text": "Conclusion",
+                "parent": null,
+                "type_str": "section",
+                "num": "5"
+            }
+        }
+    }
+}

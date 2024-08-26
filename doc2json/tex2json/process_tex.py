@@ -131,7 +131,7 @@ def save_to_parquet(data, output_path):
     table = pa.Table.from_pandas(df)
     pq.write_table(table, output_path)
 
-def convert_to_target_format_cyp(data, template):
+def convert_to_target_format_cyp(data, template, tmp_dir):
     result=[]
     template["文件id"] = data['paper_id']
     template["处理时间"] = data["header"]["date_generated"]
@@ -175,7 +175,7 @@ def convert_to_target_format_cyp(data, template):
                     new_entry["块id"] = section
                     if new_entry["数据类型"]=='figure':
                         # path=os.path.join('s2orc-doc2json/temp_dir/latex',data['paper_id'],"".join(ref_entries[ref["ref_id"]]["uris"]))
-                        path=os.path.join('./temp_dir/latex',data['paper_id'],"".join(ref_entries[ref["ref_id"]]["uris"]))
+                        path=os.path.join(tmp_dir, 'latex',data['paper_id'],"".join(ref_entries[ref["ref_id"]]["uris"]))
                         new_entry["图片"]=read_image(path)   
                     new_entry["文本"] = ref_entries[ref["ref_id"]]['text']
                     filtered_entries = {k: v for k, v in ref_entries[ref["ref_id"]].items() if k != 'text' and 'ref_id' }
@@ -235,7 +235,7 @@ if __name__ == '__main__':
     # json_path = '/root/autodl-tmp/s2orc-doc2json/output_dir/2004.14974.json'
     with open(output_file, 'r') as file:
         data = json.load(file)
-        result = convert_to_target_format_cyp(data, template)
+        result = convert_to_target_format_cyp(data, template, temp_path)
         
        
     output_json_path = os.path.splitext(output_file)[0] + ".parquet"

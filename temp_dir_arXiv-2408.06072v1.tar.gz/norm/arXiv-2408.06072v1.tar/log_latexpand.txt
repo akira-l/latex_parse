@@ -1,0 +1,7 @@
+Warning: Could not find file [math_commands.tex]
+Warning: Could not find file [math_commands.tex]
+Warning: Could not find file [math_commands.tex]
+Warning: Could not find file [math_commands.tex]
+Warning: Could not find file [math_commands.tex]
+Warning: Could not find file [math_commands.tex]
+Warning: Could not find file [math_commands.tex]

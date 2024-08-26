@@ -1,0 +1,22 @@
+# images info, 1=ps, 2=eps, 4=epsi, 8=epsf, 16=pdf, 32=png, 64=gif
+see_image("visual_hat_result_together_cut",0,1);
+see_image("visual_hat_noise_together_cut",0,1);
+see_image("visual_SDXL",0,1);
+see_image("visual_SDV1-4",0,1);
+see_image("original_compare/2",0,1);
+see_image("Ours_compare/2",0,1);
+see_image("original_compare/20",0,1);
+see_image("Ours_compare/20",0,1);
+see_image("original_compare/24",0,1);
+see_image("Ours_compare/24",0,1);
+see_image("original_compare/26",0,1);
+see_image("Ours_compare/26",0,1);
+see_image("original_compare/58",0,1);
+see_image("Ours_compare/58",0,1);
+see_image("original_compare/65",0,1);
+see_image("Ours_compare/65",0,1);
+see_image("original_compare/90",0,1);
+see_image("Ours_compare/90",0,1);
+see_image("original_compare/1709",0,1);
+see_image("Ours_compare/1709",0,1);
+see_image("visual_masa_cut",0,1);
