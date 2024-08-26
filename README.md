@@ -26,6 +26,8 @@ json2parquent.py: json to parquent
 
 json2md.py: json to md
 
+如果出现端口错误，可以重跑bash scripts/setup_grobid.sh 
+
 ## Results 
 从arxiv下载arXiv-2408.05159v1.tar.gz 和 arXiv-2408.06072v1.tar.gz于test_data/
 
